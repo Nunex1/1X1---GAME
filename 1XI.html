@@ -1,0 +1,1440 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>1XI — Monte seu XI. Dispute a liga.</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ===== TOKENS DE TEMA ===== */
+:root, [data-theme="dark"]{
+  --bg:#0F172A; --bg2:#1F2937; --nav-bg:#1F2937;
+  --card:#1E293B; --card2:#252F3F;
+  --line:#334155; --line2:#3f4d63; --row-line:#1b2533; --hover-line:#3f4d63;
+  --txt:#F8FAFC; --txt2:#94A3B8; --txt3:#5d6b7e;
+  --teal:#0F766E; --teal-hi:#14B8A6; --accent-contrast:#0f172a; --gold:#14B8A6;
+  --field:#14352f; --field-grad:#16352e;
+  --shirt-bg:#252F3F; --shirt-line:#3b4757; --shirt-num:#94A3B8;
+  --hint-bg:#172033; --err-bg:#2a1618; --me-bg:#11302c;
+  --overlay:rgba(2,6,18,.7); --sim-overlay:rgba(15,23,42,.97);
+  --disabled-bg:#475569; --disabled-txt:#94A3B8;
+  --btn2-bg:transparent; --btn2-border:#334155;
+  --err:#f87171;
+}
+[data-theme="light"]{
+  --bg:#F4F7FB; --bg2:#EAF0F6; --nav-bg:#FFFFFF;
+  --card:#FFFFFF; --card2:#EAF0F6;
+  --line:#D7E0EA; --line2:#C6D2DE; --row-line:#E8EEF5; --hover-line:#C6D2DE;
+  --txt:#0F172A; --txt2:#475569; --txt3:#64748B;
+  --teal:#0F766E; --teal-hi:#0D9488; --accent-contrast:#FFFFFF; --gold:#0F766E;
+  --field:#2F6B5A; --field-grad:#357a66;
+  --shirt-bg:#FFFFFF; --shirt-line:#C6D2DE; --shirt-num:#475569;
+  --hint-bg:#EAF0F6; --err-bg:#FEE2E2; --me-bg:#CCFBF1;
+  --overlay:rgba(15,23,42,.35); --sim-overlay:rgba(244,247,251,.97);
+  --disabled-bg:#E2E8F0; --disabled-txt:#94A3B8;
+  --btn2-bg:#FFFFFF; --btn2-border:#CBD5E1;
+  --err:#dc2626;
+}
+:root{
+  /* tokens nomeados (espec) → mapeiam aos internos */
+  --bg-primary:var(--bg); --bg-secondary:var(--bg2);
+  --card-bg:var(--card); --card-border:var(--line);
+  --text-primary:var(--txt); --text-secondary:var(--txt2);
+  --accent:var(--teal); --accent-hover:var(--teal-hi);
+  --button-primary:var(--teal); --button-primary-text:#FFFFFF;
+  /* aliases legados */
+  --cream:var(--bg); --ink:var(--txt); --blue:var(--teal); --white:var(--card); --muted:var(--txt2);
+  --green:var(--field);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--txt);min-height:100vh;}
+.bebas{font-family:'Space Grotesk','Inter',sans-serif;font-weight:700;letter-spacing:-.01em;}
+.topnav{display:flex;align-items:center;justify-content:space-between;padding:14px 28px;border-bottom:1px solid var(--line);background:var(--nav-bg);flex-wrap:wrap;gap:8px;}
+.logo{display:flex;align-items:center;gap:12px;}
+.logo-title{font-family:'Space Grotesk',sans-serif;font-size:34px;line-height:1;}
+.logo-1{color:var(--txt);}.logo-xi{color:var(--teal-hi);}
+.logo-div{width:1px;height:32px;background:var(--line);}
+.logo-sub{font-family:'Inter',sans-serif;font-size:10px;font-weight:600;line-height:1.3;color:var(--txt2);}
+.logo-tag{font-size:8px;color:var(--txt2);letter-spacing:.14em;text-transform:uppercase;}
+.nav-right{display:flex;align-items:center;gap:10px;}
+.nav-status{font-size:11px;color:#666;letter-spacing:.05em;}
+.lang-sel{border:1px solid var(--line);border-radius:8px;padding:6px 12px;font-size:12px;font-weight:600;background:var(--card);color:var(--txt);cursor:pointer;font-family:'Inter',sans-serif;}
+.theme-toggle{display:inline-flex;background:var(--card2);border:1px solid var(--line);border-radius:8px;padding:2px;gap:2px;}
+.tt-opt{border:none;background:transparent;color:var(--txt2);font-size:11px;font-weight:600;font-family:'Inter',sans-serif;padding:5px 10px;border-radius:6px;cursor:pointer;transition:all .15s;}
+.tt-opt:hover{color:var(--txt);}
+.tt-opt.active{background:var(--teal);color:#fff;}
+.screen{display:none;}
+.screen.active{display:block;}
+.config-wrap{max-width:920px;margin:0 auto;padding:44px 24px 60px;}.config-sub{font-size:14px;color:var(--txt2);line-height:1.6;max-width:560px;margin-bottom:30px;}.config-inst{font-size:12px;color:var(--txt2);line-height:1.6;max-width:620px;margin-top:30px;opacity:.85;}
+.eyebrow{font-size:11px;font-weight:700;letter-spacing:.18em;color:var(--teal-hi);margin-bottom:8px;text-transform:uppercase;}
+.config-title{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:46px;line-height:1.02;letter-spacing:-.02em;color:var(--txt);}
+.config-title .xi{color:var(--teal-hi);}
+.gold-bar{height:4px;width:64px;background:var(--teal-hi);border-radius:2px;margin:16px 0 10px;}
+.config-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+@media(max-width:720px){.config-grid{grid-template-columns:1fr;}}
+.ccard{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px;transition:border-color .15s;}.ccard:hover{border-color:var(--hover-line);}
+.clabel{font-size:12px;font-weight:700;letter-spacing:.02em;color:var(--txt);margin-bottom:4px;}.cdesc{font-size:11px;color:var(--txt2);line-height:1.5;margin-bottom:14px;}
+.opt-grid{display:flex;flex-wrap:wrap;gap:7px;}
+.opt{border:1px solid var(--line);border-radius:8px;padding:8px 14px;font-size:12px;font-weight:600;color:var(--txt2);background:var(--card2);cursor:pointer;letter-spacing:.01em;transition:all .15s;}
+.opt:hover{border-color:var(--teal-hi);color:var(--txt);}
+.opt.sel{background:var(--teal);color:#fff;border-color:var(--teal);}
+.opt.sel-blue{background:var(--teal);color:#fff;border-color:var(--teal);}
+.opt-desc{font-size:11px;color:var(--txt2);margin-top:12px;line-height:1.5;min-height:28px;}
+.liga-opt{display:flex;align-items:center;gap:9px;}
+.liga-flag{width:22px;height:15px;border-radius:2px;overflow:hidden;flex-shrink:0;display:inline-flex;}
+.start-row{margin-top:28px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;}
+.btn-primary{background:var(--teal);color:#fff;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:15px;letter-spacing:.02em;padding:14px 28px;border-radius:8px;cursor:pointer;border:none;transition:background .15s;}
+.btn-primary:hover{background:var(--teal-hi);}
+.btn-primary:disabled{background:var(--disabled-bg);color:var(--disabled-txt);cursor:not-allowed;}
+.start-hint{font-size:12px;color:var(--txt2);}
+.build-main{display:flex;min-height:calc(100vh - 61px);}
+.sidebar{width:236px;flex-shrink:0;border-right:1px solid var(--line);display:flex;flex-direction:column;background:var(--card);}
+.saiu-block{padding:16px;border-bottom:1px solid var(--line);background:var(--card);}
+.saiu-label{font-size:9px;font-weight:700;letter-spacing:.14em;color:var(--teal-hi);margin-bottom:5px;text-transform:uppercase;}
+.saiu-clube{font-size:18px;font-weight:700;line-height:1.15;color:var(--txt);}
+.saiu-ano{font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:600;color:var(--teal-hi);}
+.resort-block{padding:12px 16px;border-bottom:1px solid var(--line);background:var(--card);}
+.resort-label{font-size:9px;font-weight:700;letter-spacing:.1em;color:var(--txt2);margin-bottom:7px;text-transform:uppercase;}
+.resort-btns{display:flex;gap:6px;}
+.rbtn{border:1px solid var(--line);border-radius:7px;padding:7px;font-size:9px;font-weight:700;background:var(--card2);color:var(--txt2);cursor:pointer;flex:1;letter-spacing:.03em;transition:all .15s;}
+.rbtn:hover{border-color:var(--teal-hi);color:var(--txt);}
+.choose-label{font-size:9px;font-weight:700;letter-spacing:.12em;color:var(--txt2);padding:10px 16px 6px;background:var(--card);border-bottom:1px solid var(--line);text-transform:uppercase;}
+.player-list{flex:1;overflow-y:auto;background:var(--card);min-height:0;}
+.prow{display:flex;align-items:center;padding:8px 12px;border-bottom:1px solid var(--row-line);cursor:pointer;gap:7px;transition:background .12s;}
+.prow:hover{background:var(--card2);}
+.prow.selected{background:var(--teal);}
+.prow.taken{opacity:.35;cursor:default;}
+.prow.taken:hover{background:var(--white);}
+.pnum{font-size:9px;font-weight:700;color:var(--txt2);min-width:24px;}
+.prow.selected .pnum{color:rgba(255,255,255,.6);}
+.pname{font-size:12px;font-weight:500;flex:1;color:var(--txt);}
+.prow.selected .pname{color:var(--white);}
+.ppos{font-size:9px;color:var(--txt2);min-width:42px;font-weight:600;}
+.prow.selected .ppos{color:rgba(255,255,255,.7);}
+.povr{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:15px;color:var(--teal-hi);min-width:24px;text-align:right;}
+.prow.selected .povr{color:var(--white);}
+.confirm-hint{font-size:10px;color:var(--txt2);padding:9px 16px;background:var(--hint-bg);border-bottom:1px solid var(--line);line-height:1.5;}
+.confirm-hint.err{color:var(--err);background:var(--err-bg);}
+.next-draw{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:24px;background:var(--card);text-align:center;}
+.check-circle{width:46px;height:46px;border-radius:50%;background:var(--teal);display:flex;align-items:center;justify-content:center;color:#fff;font-size:24px;}
+.next-msg{font-size:11px;color:var(--txt2);line-height:1.6;}
+.next-added{font-size:13px;font-weight:600;color:var(--txt);}
+.btn-sm{background:var(--teal);color:#fff;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:14px;letter-spacing:.02em;padding:12px 20px;border-radius:8px;cursor:pointer;border:none;width:100%;transition:background .15s;}.btn-sm:hover{background:var(--teal-hi);}
+.field-area{flex:1;display:flex;align-items:center;justify-content:center;padding:18px;}
+.field-wrap{background:linear-gradient(160deg,var(--field-grad),transparent);background-color:var(--field);border:1px solid var(--line);border-radius:12px;width:300px;height:460px;position:relative;overflow:hidden;flex-shrink:0;}
+.boxscore{width:200px;flex-shrink:0;border-left:1px solid var(--line);padding:16px 13px;background:var(--bg2);}
+.bs-header{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;}
+.bs-title{font-size:9px;font-weight:700;letter-spacing:.12em;color:var(--txt2);text-transform:uppercase;}
+.bs-ovr{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:26px;color:var(--teal-hi);}
+.bs-row{display:flex;align-items:center;padding:5px 0;border-bottom:1px solid var(--line);gap:5px;}
+.bs-row:last-child{border-bottom:none;}
+.bs-pos{font-size:9px;font-weight:700;color:var(--txt2);min-width:30px;letter-spacing:.05em;}
+.bs-name{font-size:10px;color:var(--txt3);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.bs-name.filled{color:var(--txt);font-weight:500;}
+.bs-num{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:13px;color:var(--teal-hi);}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes pulse{0%,100%{opacity:.3}50%{opacity:.9}}
+.spinner{width:38px;height:38px;border:3px solid var(--teal-hi);border-top-color:transparent;border-radius:50%;animation:spin .8s linear infinite;}
+.load-center{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;background:var(--card);}
+.load-txt{font-size:11px;color:var(--txt2);letter-spacing:.08em;font-weight:600;}
+.fdot{width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,.5);}
+.fdot:nth-child(1){animation:pulse 1.2s infinite 0s;}
+.fdot:nth-child(2){animation:pulse 1.2s infinite .2s;}
+.fdot:nth-child(3){animation:pulse 1.2s infinite .4s;}
+.results-wrap{max-width:980px;margin:0 auto;padding:30px 24px 60px;}
+.res-header{display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:16px;margin-bottom:8px;}
+.res-pos-big{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:76px;line-height:.9;color:var(--teal-hi);}
+.res-pos-label{font-size:10px;font-weight:700;letter-spacing:.14em;color:var(--txt2);text-transform:uppercase;}
+.res-summary{font-size:13px;color:var(--txt2);line-height:1.6;max-width:460px;}
+.res-tabs{display:flex;gap:0;border-bottom:1px solid var(--line);margin:24px 0 18px;}
+.rtab{padding:10px 22px;font-size:11px;font-weight:700;letter-spacing:.06em;color:var(--txt2);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;text-transform:uppercase;}
+.rtab.active{color:var(--teal-hi);border-bottom-color:var(--teal-hi);}
+table{width:100%;border-collapse:collapse;background:var(--card);border-radius:10px;overflow:hidden;font-size:12px;border:1px solid var(--line);}
+th{font-size:9px;font-weight:700;letter-spacing:.08em;color:var(--txt2);text-align:left;padding:10px;border-bottom:1px solid var(--line);background:var(--bg2);text-transform:uppercase;}
+th.c,td.c{text-align:center;}
+td{padding:8px 10px;border-bottom:1px solid var(--row-line);color:var(--txt);}
+tr.me{background:var(--me-bg);}
+tr.me td{font-weight:700;}
+td.pos-cell{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:14px;color:var(--txt2);width:34px;}
+tr.me td.pos-cell{color:var(--teal-hi);}
+.res-w{color:#34d399;font-weight:700;}
+.res-d{color:#fbbf24;font-weight:700;}
+.res-l{color:#f87171;font-weight:700;}
+.match-row td{font-size:11px;}
+.btn-row{display:flex;gap:12px;margin-top:26px;flex-wrap:wrap;}
+.btn-secondary{background:var(--btn2-bg);color:var(--txt);font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:14px;letter-spacing:.02em;padding:13px 24px;border-radius:8px;cursor:pointer;border:1px solid var(--btn2-border);transition:border-color .15s;}.btn-secondary:hover{border-color:var(--teal-hi);}
+.zebra{font-size:10px;color:var(--txt2);margin-top:10px;}
+.res-topbar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px;}
+.res-title{font-size:30px;line-height:1.05;color:var(--txt);font-weight:700;}
+.btn-gold{background:transparent;border:1px solid var(--teal-hi);color:var(--teal-hi);font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:13px;letter-spacing:.02em;padding:10px 16px;border-radius:8px;cursor:pointer;transition:all .15s;}
+.btn-gold:hover{background:var(--teal-hi);color:var(--accent-contrast);}
+.btn-mini{font-size:16px;padding:9px 18px;}
+.team-input{width:100%;border:1px solid var(--line);border-radius:8px;padding:10px 12px;font-size:13px;font-family:'Inter',sans-serif;font-weight:600;background:var(--card2);color:var(--txt);outline:none;}
+.team-input:focus{border-color:var(--teal-hi);}
+tr.me td:first-child{border-left:3px solid var(--teal-hi);}
+.me-star{color:var(--teal-hi);margin-right:3px;}
+.modal-overlay{position:fixed;inset:0;background:var(--overlay);display:none;align-items:center;justify-content:center;z-index:60;padding:18px;}
+.modal-overlay.show{display:flex;}
+.modal-panel{background:var(--bg2);border-radius:14px;max-width:520px;width:100%;max-height:86vh;overflow-y:auto;padding:24px;border:1px solid var(--line);}
+.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;}
+.modal-x{border:none;background:none;font-size:26px;cursor:pointer;color:var(--txt2);line-height:1;}
+.sum-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:6px;}
+@media(max-width:560px){.sum-grid{grid-template-columns:1fr 1fr;}}
+.sum-card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:11px 13px;}
+.sum-lbl{font-size:8px;font-weight:700;letter-spacing:.1em;color:var(--txt2);margin-bottom:4px;text-transform:uppercase;}
+.sum-val{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:20px;color:var(--txt);}
+.sum-val.blue{color:var(--teal-hi);}
+.sum-val.small{font-size:13px;font-family:'Inter',sans-serif;font-weight:600;line-height:1.4;}
+.squad-row{display:flex;align-items:center;gap:8px;background:var(--card);border-bottom:1px solid var(--row-line);padding:8px 12px;}
+.squad-row:first-child{border-radius:8px 8px 0 0;}
+.squad-row:last-child{border-radius:0 0 8px 8px;border-bottom:none;}
+.sq-pos{font-size:9px;font-weight:700;color:var(--txt2);min-width:32px;letter-spacing:.05em;}
+.sq-num{font-size:9px;font-weight:700;color:var(--txt3);min-width:26px;}
+.sq-name{font-size:12px;font-weight:600;flex:1;color:var(--txt);}
+.sq-tag{font-size:9px;color:var(--txt2);}
+.sq-ovr{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:15px;color:var(--teal-hi);min-width:24px;text-align:right;}
+.sim-overlay{position:fixed;inset:0;background:var(--sim-overlay);display:none;align-items:center;justify-content:center;flex-direction:column;gap:18px;z-index:50;}
+.sim-overlay.show{display:flex;}
+.sim-round{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:44px;color:var(--teal-hi);}
+.sim-label{font-size:11px;color:var(--txt2);letter-spacing:.12em;font-weight:700;text-transform:uppercase;}
+</style>
+</head>
+<body>
+
+<div class="topnav">
+  <div class="logo" style="cursor:pointer;" role="button" tabindex="0" aria-label="Home / Início" onclick="goHome()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();goHome()}">
+    <div class="logo-title"><span class="logo-1">1</span><span class="logo-xi">XI</span></div>
+    <div class="logo-div"></div>
+    <div><div class="logo-sub bebas" id="navSlogan"></div><div class="logo-tag" id="navTag"></div></div>
+  </div>
+  <div class="nav-right">
+    <span class="nav-status" id="navStatus"></span>
+    <div class="theme-toggle" id="themeToggle" role="group" aria-label="Tema">
+      <button class="tt-opt" id="ttLight" onclick="applyTheme('light')"></button>
+      <button class="tt-opt" id="ttDark" onclick="applyTheme('dark')"></button>
+    </div>
+    <select class="lang-sel" id="langSel" onchange="setLang(this.value)">
+      <option value="pt">Português</option>
+      <option value="en">English</option>
+      <option value="es">Español</option>
+      <option value="tr">Türkçe</option>
+      <option value="fr">Français</option>
+      <option value="de">Deutsch</option>
+    </select>
+  </div>
+</div>
+
+<div class="screen active" id="screenConfig">
+  <div class="config-wrap">
+    <div class="eyebrow" id="cfgEyebrow"></div>
+    <div class="config-title" id="cfgTitle"></div>
+    <div class="gold-bar"></div>
+    <div class="config-sub" id="cfgSub"></div>
+    <div class="config-grid">
+      <div class="ccard"><div class="clabel" id="lblFormation"></div><div class="cdesc" id="cdFormation"></div><div class="opt-grid" id="optFormation"></div><div class="opt-desc" id="descFormation"></div></div>
+      <div class="ccard"><div class="clabel" id="lblStyle"></div><div class="cdesc" id="cdStyle"></div><div class="opt-grid" id="optStyle"></div><div class="opt-desc" id="descStyle"></div></div>
+      <div class="ccard"><div class="clabel" id="lblDiff"></div><div class="cdesc" id="cdDiff"></div><div class="opt-grid" id="optDiff"></div><div class="opt-desc" id="descDiff"></div></div>
+      <div class="ccard"><div class="clabel" id="lblLiga"></div><div class="cdesc" id="cdLeague"></div><div class="opt-grid" id="optLiga" style="flex-direction:column;align-items:stretch;"></div><div class="opt-desc" id="descLiga"></div></div>
+    </div>
+    <div class="start-row">
+      <button class="btn-primary" id="btnStart" disabled onclick="startBuild()"></button>
+      <div class="start-hint" id="startHint"></div>
+    </div>
+    <div class="config-inst" id="cfgInst"></div>
+  </div>
+</div>
+
+<div class="screen" id="screenBuild">
+  <div class="build-main">
+    <div class="sidebar" id="buildSidebar"></div>
+    <div class="field-area">
+      <div class="field-wrap">
+        <svg style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;" viewBox="0 0 300 460">
+          <rect x="1" y="1" width="298" height="458" rx="10" fill="none" stroke="rgba(148,163,184,.22)" stroke-width="1"/>
+          <rect x="85" y="1" width="130" height="56" fill="none" stroke="rgba(148,163,184,.22)" stroke-width="1"/>
+          <rect x="85" y="403" width="130" height="56" fill="none" stroke="rgba(148,163,184,.22)" stroke-width="1"/>
+          <line x1="1" y1="230" x2="299" y2="230" stroke="rgba(148,163,184,.16)" stroke-width="1"/>
+          <circle cx="150" cy="230" r="38" fill="none" stroke="rgba(148,163,184,.16)" stroke-width="1"/>
+          <circle cx="150" cy="230" r="3" fill="rgba(148,163,184,.3)"/>
+        </svg>
+        <div id="fieldSlots" style="position:absolute;inset:0;"></div>
+        <div id="fieldLoading" style="display:none;position:absolute;inset:0;align-items:center;justify-content:center;">
+          <div style="display:flex;gap:10px;"><div class="fdot"></div><div class="fdot"></div><div class="fdot"></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="boxscore">
+      <div class="bs-header"><span class="bs-title"><span id="bsLbl"></span> · <span id="bsCount">0</span>/11</span><span class="bs-ovr" id="bsOvr"></span></div>
+      <div id="bsRows"></div>
+    </div>
+  </div>
+</div>
+
+<div class="screen" id="screenResults">
+  <div class="results-wrap">
+    <div class="res-topbar">
+      <div class="res-title bebas" id="resTitle"></div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn-gold" id="btnMyTeam" onclick="openMyTeam()"></button>
+        <button class="btn-primary btn-mini" id="btnGoFinal" onclick="goFinal()"></button>
+      </div>
+    </div>
+    <div class="res-header">
+      <div><div class="res-pos-label" id="resPosLabel"></div><div class="res-pos-big" id="resPos"></div></div>
+      <div class="res-summary" id="resSummary"></div>
+    </div>
+    <div class="res-tabs">
+      <div class="rtab active" id="rtab0" onclick="showResTab(0)"></div>
+      <div class="rtab" id="rtab1" onclick="showResTab(1)"></div>
+    </div>
+    <div id="resTabela"></div>
+    <div id="resJogos" style="display:none;"></div>
+    <div class="btn-row">
+      <button class="btn-primary" id="btnResim" onclick="resimulate()"></button>
+      <button class="btn-secondary" id="btnNew" onclick="newGame()"></button>
+    </div>
+    <div class="zebra" id="zebraNote"></div>
+  </div>
+</div>
+
+<div class="screen" id="screenFinal">
+  <div class="results-wrap">
+    <div class="res-topbar">
+      <div class="res-title bebas" id="finTitle"></div>
+      <button class="btn-gold" id="btnBack" onclick="backToTable()"></button>
+    </div>
+    <div class="res-header">
+      <div><div class="res-pos-label" id="finPosLabel"></div><div class="res-pos-big" id="finPos"></div></div>
+      <div class="res-summary" id="finSummary"></div>
+    </div>
+    <div class="sum-grid" id="finStats" style="margin-top:14px;"></div>
+    <div class="resort-label" id="finSquadLbl" style="margin:16px 0 6px;font-size:9px;"></div>
+    <div id="finList" style="border:0.5px solid var(--line);border-radius:8px;overflow:hidden;"></div>
+    <div class="btn-row">
+      <button class="btn-primary" id="finResim" onclick="resimulate()"></button>
+      <button class="btn-secondary" id="finNew" onclick="newGame()"></button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="myTeamModal" onclick="if(event.target===this)closeMyTeam()">
+  <div class="modal-panel">
+    <div class="modal-head"><span class="bebas" id="mtTitle" style="font-size:26px;"></span><button class="modal-x" onclick="closeMyTeam()">×</button></div>
+    <div class="sum-grid" id="mtSummary"></div>
+    <div class="resort-label" id="mtSquadLbl" style="margin:12px 0 6px;font-size:9px;"></div>
+    <div id="mtList" style="border:0.5px solid var(--line);border-radius:8px;overflow:hidden;"></div>
+  </div>
+</div>
+
+<div class="sim-overlay" id="simOverlay">
+  <div class="spinner"></div>
+  <div class="sim-round" id="simRound"></div>
+  <div class="sim-label" id="simLabel"></div>
+</div>
+
+<script>
+/* ====================================================================
+   1XI v2 — posições rígidas, sem duplicados, simulação setorial, i18n
+   Módulos: I18N · DATA · CONFIG · SLOTS · BUILD · VALIDATE · SIM · UI
+==================================================================== */
+
+/* ===================== I18N ===================== */
+const I18N = {
+pt:{tagline:'ESCALE · SIMULE · VENÇA',slogan:'O DESAFIO DOS SUPER ELENCOS',eyebrow:'O DESAFIO DOS SUPER ELENCOS',title:'CONSTRUA O <span class="xi">XI</span> DEFINITIVO',subtitle:'Escolha a liga, defina seu estilo de jogo, ajuste a formação e teste se o seu super elenco consegue vencer uma temporada histórica.',institutional:'1XI é um jogo independente de montagem e simulação de super elencos. Escolha sua liga, escale seu time e tente vencer uma temporada histórica.',cFormation:'Defina a estrutura base do seu XI.',cStyle:'Escolha como seu elenco vai se comportar em campo.',cDiff:'Ajuste o nível competitivo da temporada.',cLeague:'Selecione o ambiente histórico do desafio.',
+formation:'FORMAÇÃO TÁTICA',styleL:'ESTILO DE JOGO',diffL:'DIFICULDADE',leagueL:'LIGA DO CAMPEONATO',
+hint0:'Selecione formação, estilo, dificuldade e liga para começar.',hint1:'Tudo pronto. Boa sorte, técnico.',start:'COMEÇAR DESAFIO',
+leagueDesc:'Campeonato com 19 equipes memoráveis da {league} + seu XI.',
+styles:{posse:'Posse de bola',contra:'Contra-ataque',pressao:'Pressão alta',equilibrado:'Jogo equilibrado',defesa:'Defesa forte',ataque:'Ataque intenso'},
+styleD:{posse:'Mais controle e consistência; menos imprevisível.',contra:'Imprevisível: surpreende ou sofre.',pressao:'Mais vitórias possíveis, risco defensivo alto.',equilibrado:'Sem bônus nem riscos.',defesa:'Evita goleadas; ataque menos produtivo.',ataque:'Volume ofensivo máximo; placares abertos.'},
+diffs:{facil:'Fácil',medio:'Médio',dificil:'Difícil',lendario:'Lendário'},
+diffD:{facil:'Leve vantagem. 7 re-sorteios.',medio:'Equilibrado, overalls visíveis. 5 re-sorteios.',dificil:'Adversários mais fortes, overalls ocultos. 3 re-sorteios.',lendario:'Elite consistente. 2 re-sorteios.'},
+formD:{'4-3-3':'Trio ofensivo; mais gols, defesa exposta.','4-4-2':'Clássica e equilibrada.','3-5-2':'Meio povoado, alas sobrecarregados.','4-2-3-1':'Dois volantes; criação no meia.','5-3-2':'Bloco baixo, difícil de vazar.','4-1-4-1':'Volante de contenção, ataque isolado.'},
+saiu:'SAIU',resort:'NÃO CURTIU? RE-SORTEIE',left1:'{n} RESTANTE',leftN:'{n} RESTANTES',otherClub:'↺ OUTRO CLUBE',otherSeason:'↺ OUTRA TEMPORADA',
+choose:'ESCOLHA UM JOGADOR',confirm:'Clique de novo em <b>{name}</b> para confirmar como {pos}.',
+incompat:'{name} joga como {pos} — não há vaga compatível nesta formação.',
+nocompat:'Nenhum jogador deste elenco encaixa nas posições que faltam.',skip:'SORTEAR OUTRA EQUIPE →',
+added:'{name} escalado',filledMsg:'{n}/11 posições preenchidas.<br>Sorteie a próxima equipe histórica.',drawBtn:'SORTEAR EQUIPE →',
+complete:'XI completo!',completeMsg:'Média do time: <b>{ovr}</b>.<br>Hora de sortear os 19 adversários e disputar as 38 rodadas.',simBtn:'SIMULAR LIGA →',
+box:'BOX SCORE',round:'RODADA',simulating:'SIMULANDO TEMPORADA · 38 RODADAS',drawing:'SORTEANDO EQUIPE...',
+finalLabel:'SUA CLASSIFICAÇÃO FINAL',tabTable:'TABELA FINAL',tabMatches:'SEUS 38 JOGOS',
+th:{team:'TIME',p:'PTS',j:'J',v:'V',e:'E',d:'D',gp:'GF',gc:'GC',sg:'SG',rod:'ROD',home:'MANDANTE',score:'PLACAR',away:'VISITANTE',res:'RESULTADO'},
+win:'VITÓRIA',draw:'EMPATE',loss:'DERROTA',resim:'SIMULAR DE NOVO →',newG:'NOVO JOGO',
+zebra:'Cada simulação gera resultados diferentes — o overall pesa, mas zebras acontecem.',
+myTeam:'Seu XI',
+ph1:'Campeão! Seu XI dominou a liga dos sonhos com {pts} pontos ({v}V {e}E {d}D).',
+ph2:'Grande campanha: {pts} pontos e vaga de elite. O título ficou com {champ} ({cpts} pts).',
+ph3:'Meio de tabela: {pts} pontos. {champ} levou o título com {cpts} pts.',
+ph4:'Campanha difícil: {pts} pontos contra gigantes históricos. {champ} foi campeão.',
+ph5:'Zona de rebaixamento: {pts} pontos. As lendas não perdoaram.',
+valCount:'A equipe precisa de 11 titulares.',valDup:'Jogador duplicado: {name}.',valPos:'Jogador fora de posição: {name}.',nameTitle:'NOMEIE SEU TIME',namePh:'Nome do time',startChamp:'INICIAR CAMPEONATO →',classFinal:'Classificação Final',tabT:'Tabela',tabR:'Rodadas',myBtn:'⭐ Meu Time',resBtn:'Resultado →',backBtn:'← Classificação',finalTitle:'Resultado da Campanha',ovrL:'Overall',atkL:'Ataque',defL:'Defesa',formL:'Formação',posL:'Posição final',campL:'Campanha',campTxt:'{j} jogos, {v} vitórias, {e} empates, {d} derrotas',gfL:'Gols feitos',gcL:'Gols sofridos',sgL:'Saldo de gols',ptsL:'Pontos',close:'Fechar',squadTitle:'Plantel · 11 titulares',themeLight:'Claro',themeDark:'Escuro'},
+en:{tagline:'BUILD · SIMULATE · WIN',slogan:'THE SUPER-SQUAD CHALLENGE',eyebrow:'THE SUPER-SQUAD CHALLENGE',title:'BUILD THE ULTIMATE <span class="xi">XI</span>',subtitle:'Pick a league, set your play style, tune the formation and see if your super-squad can win a historic season.',institutional:'1XI is an independent super-squad building and simulation game. Pick your league, field your team and try to win a historic season.',cFormation:'Set the base structure of your XI.',cStyle:'Choose how your squad behaves on the pitch.',cDiff:'Tune the competitive level of the season.',cLeague:'Select the historic setting of the challenge.',
+formation:'TACTICAL FORMATION',styleL:'PLAY STYLE',diffL:'DIFFICULTY',leagueL:'CHAMPIONSHIP LEAGUE',
+hint0:'Pick formation, style, difficulty and league to start.',hint1:'All set. Good luck, coach.',start:'START CHALLENGE',
+leagueDesc:'A league with 19 memorable {league} squads + your XI.',
+styles:{posse:'Possession',contra:'Counter-attack',pressao:'High press',equilibrado:'Balanced',defesa:'Solid defense',ataque:'All-out attack'},
+styleD:{posse:'More control and consistency.',contra:'Unpredictable: surprise or suffer.',pressao:'More wins possible, high defensive risk.',equilibrado:'No bonus, no risk.',defesa:'Avoids thrashings; less productive attack.',ataque:'Maximum offense; open scorelines.'},
+diffs:{facil:'Easy',medio:'Medium',dificil:'Hard',lendario:'Legendary'},
+diffD:{facil:'Slight edge. 7 re-draws.',medio:'Balanced, ratings visible. 5 re-draws.',dificil:'Stronger opponents, hidden ratings. 3 re-draws.',lendario:'Consistent elite. 2 re-draws.'},
+formD:{'4-3-3':'Front three; more goals, exposed defense.','4-4-2':'Classic and balanced.','3-5-2':'Packed midfield, busy wing-backs.','4-2-3-1':'Double pivot; playmaker creates.','5-3-2':'Low block, hard to break.','4-1-4-1':'Holding mid, isolated striker.'},
+saiu:'DRAWN',resort:'NOT FEELING IT? RE-DRAW',left1:'{n} LEFT',leftN:'{n} LEFT',otherClub:'↺ ANOTHER CLUB',otherSeason:'↺ ANOTHER SEASON',
+choose:'PICK A PLAYER',confirm:'Click <b>{name}</b> again to confirm as {pos}.',
+incompat:'{name} plays as {pos} — no open spot in this formation.',
+nocompat:'No player in this squad fits your open positions.',skip:'DRAW ANOTHER SQUAD →',
+added:'{name} added',filledMsg:'{n}/11 positions filled.<br>Draw the next historic squad.',drawBtn:'DRAW SQUAD →',
+complete:'XI complete!',completeMsg:'Team rating: <b>{ovr}</b>.<br>Time to draw 19 opponents and play 38 rounds.',simBtn:'SIMULATE LEAGUE →',
+box:'BOX SCORE',round:'ROUND',simulating:'SIMULATING SEASON · 38 ROUNDS',drawing:'DRAWING SQUAD...',
+finalLabel:'YOUR FINAL POSITION',tabTable:'FINAL TABLE',tabMatches:'YOUR 38 MATCHES',
+th:{team:'TEAM',p:'PTS',j:'P',v:'W',e:'D',d:'L',gp:'GF',gc:'GA',sg:'GD',rod:'RD',home:'HOME',score:'SCORE',away:'AWAY',res:'RESULT'},
+win:'WIN',draw:'DRAW',loss:'LOSS',resim:'SIMULATE AGAIN →',newG:'NEW GAME',
+zebra:'Every simulation is different — ratings matter, but upsets happen.',
+myTeam:'Your XI',
+ph1:'Champions! Your XI dominated the dream league with {pts} points ({v}W {e}D {d}L).',
+ph2:'Great campaign: {pts} points, elite spot. {champ} took the title ({cpts} pts).',
+ph3:'Mid-table season: {pts} points. {champ} won the title with {cpts} pts.',
+ph4:'Tough season: {pts} points against historic giants. {champ} were champions.',
+ph5:'Relegation zone: {pts} points. The legends showed no mercy.',
+valCount:'The team needs 11 starters.',valDup:'Duplicate player: {name}.',valPos:'Player out of position: {name}.',nameTitle:'NAME YOUR TEAM',namePh:'Team name',startChamp:'START CHAMPIONSHIP →',classFinal:'Final Standings',tabT:'Table',tabR:'Matches',myBtn:'⭐ My Team',resBtn:'Result →',backBtn:'← Standings',finalTitle:'Campaign Result',ovrL:'Overall',atkL:'Attack',defL:'Defense',formL:'Formation',posL:'Final position',campL:'Campaign',campTxt:'{j} games, {v} wins, {e} draws, {d} losses',gfL:'Goals for',gcL:'Goals against',sgL:'Goal difference',ptsL:'Points',close:'Close',squadTitle:'Squad · 11 starters',themeLight:'Light',themeDark:'Dark'},
+es:{tagline:'ALINEA · SIMULA · GANA',slogan:'EL DESAFÍO DE LAS SÚPER PLANTILLAS',eyebrow:'EL DESAFÍO DE LAS SÚPER PLANTILLAS',title:'CONSTRUYE EL <span class="xi">XI</span> DEFINITIVO',subtitle:'Elige la liga, define tu estilo de juego, ajusta la formación y comprueba si tu súper plantilla puede ganar una temporada histórica.',institutional:'1XI es un juego independiente de armado y simulación de súper plantillas. Elige tu liga, alinea tu equipo e intenta ganar una temporada histórica.',cFormation:'Define la estructura base de tu XI.',cStyle:'Elige cómo se comporta tu plantilla en el campo.',cDiff:'Ajusta el nivel competitivo de la temporada.',cLeague:'Selecciona el entorno histórico del desafío.',
+formation:'FORMACIÓN TÁCTICA',styleL:'ESTILO DE JUEGO',diffL:'DIFICULTAD',leagueL:'LIGA DEL CAMPEONATO',
+hint0:'Elige formación, estilo, dificultad y liga para empezar.',hint1:'Todo listo. Suerte, míster.',start:'EMPEZAR DESAFÍO',
+leagueDesc:'Campeonato con 19 equipos memorables de {league} + tu XI.',
+styles:{posse:'Posesión',contra:'Contraataque',pressao:'Presión alta',equilibrado:'Equilibrado',defesa:'Defensa sólida',ataque:'Ataque total'},
+styleD:{posse:'Más control y consistencia.',contra:'Impredecible: sorprende o sufre.',pressao:'Más victorias posibles, alto riesgo atrás.',equilibrado:'Sin bonus ni riesgos.',defesa:'Evita goleadas; ataque menos productivo.',ataque:'Máximo volumen ofensivo.'},
+diffs:{facil:'Fácil',medio:'Medio',dificil:'Difícil',lendario:'Legendario'},
+diffD:{facil:'Leve ventaja. 7 re-sorteos.',medio:'Equilibrado, medias visibles. 5 re-sorteos.',dificil:'Rivales más fuertes, medias ocultas. 3 re-sorteos.',lendario:'Élite consistente. 2 re-sorteos.'},
+formD:{'4-3-3':'Tridente; más goles, defensa expuesta.','4-4-2':'Clásica y equilibrada.','3-5-2':'Medio poblado, carrileros exigidos.','4-2-3-1':'Doble pivote; el media crea.','5-3-2':'Bloque bajo, difícil de batir.','4-1-4-1':'Pivote de contención, delantero aislado.'},
+saiu:'SALIÓ',resort:'¿NO TE GUSTA? RE-SORTEA',left1:'{n} RESTANTE',leftN:'{n} RESTANTES',otherClub:'↺ OTRO CLUB',otherSeason:'↺ OTRA TEMPORADA',
+choose:'ELIGE UN JUGADOR',confirm:'Haz clic de nuevo en <b>{name}</b> para confirmarlo como {pos}.',
+incompat:'{name} juega de {pos} — no hay hueco compatible en esta formación.',
+nocompat:'Ningún jugador de esta plantilla encaja en las posiciones libres.',skip:'SORTEAR OTRO EQUIPO →',
+added:'{name} alineado',filledMsg:'{n}/11 posiciones cubiertas.<br>Sortea el próximo equipo histórico.',drawBtn:'SORTEAR EQUIPO →',
+complete:'¡XI completo!',completeMsg:'Media del equipo: <b>{ovr}</b>.<br>Hora de sortear 19 rivales y jugar 38 jornadas.',simBtn:'SIMULAR LIGA →',
+box:'BOX SCORE',round:'JORNADA',simulating:'SIMULANDO TEMPORADA · 38 JORNADAS',drawing:'SORTEANDO EQUIPO...',
+finalLabel:'TU CLASIFICACIÓN FINAL',tabTable:'TABLA FINAL',tabMatches:'TUS 38 PARTIDOS',
+th:{team:'EQUIPO',p:'PTS',j:'PJ',v:'G',e:'E',d:'P',gp:'GF',gc:'GC',sg:'DG',rod:'JOR',home:'LOCAL',score:'MARCADOR',away:'VISITANTE',res:'RESULTADO'},
+win:'VICTORIA',draw:'EMPATE',loss:'DERROTA',resim:'SIMULAR DE NUEVO →',newG:'NUEVO JUEGO',
+zebra:'Cada simulación es distinta — la media pesa, pero hay sorpresas.',
+myTeam:'Tu XI',
+ph1:'¡Campeón! Tu XI dominó la liga soñada con {pts} puntos ({v}G {e}E {d}P).',
+ph2:'Gran campaña: {pts} puntos y plaza de élite. {champ} ganó el título ({cpts} pts).',
+ph3:'Mitad de tabla: {pts} puntos. {champ} se llevó el título con {cpts} pts.',
+ph4:'Temporada dura: {pts} puntos ante gigantes históricos. {champ} fue campeón.',
+ph5:'Zona de descenso: {pts} puntos. Las leyendas no perdonaron.',
+valCount:'El equipo necesita 11 titulares.',valDup:'Jugador duplicado: {name}.',valPos:'Jugador fuera de posición: {name}.',nameTitle:'NOMBRA TU EQUIPO',namePh:'Nombre del equipo',startChamp:'INICIAR CAMPEONATO →',classFinal:'Clasificación Final',tabT:'Tabla',tabR:'Jornadas',myBtn:'⭐ Mi Equipo',resBtn:'Resultado →',backBtn:'← Clasificación',finalTitle:'Resultado de la Campaña',ovrL:'Media',atkL:'Ataque',defL:'Defensa',formL:'Formación',posL:'Posición final',campL:'Campaña',campTxt:'{j} partidos, {v} victorias, {e} empates, {d} derrotas',gfL:'Goles a favor',gcL:'Goles en contra',sgL:'Diferencia de goles',ptsL:'Puntos',close:'Cerrar',squadTitle:'Plantilla · 11 titulares',themeLight:'Claro',themeDark:'Oscuro'},
+tr:{tagline:'KUR · SİMÜLE ET · KAZAN',slogan:'SÜPER KADRO MEYDAN OKUMASI',eyebrow:'SÜPER KADRO MEYDAN OKUMASI',title:'NİHAİ <span class="xi">XI</span>’İ KUR',subtitle:'Bir lig seç, oyun stilini belirle, dizilişi ayarla ve süper kadronun tarihi bir sezonu kazanıp kazanamayacağını test et.',institutional:'1XI, bağımsız bir süper kadro kurma ve simülasyon oyunudur. Ligini seç, takımını kur ve tarihi bir sezonu kazanmayı dene.',cFormation:'XI’inin temel yapısını belirle.',cStyle:'Kadronun sahada nasıl davranacağını seç.',cDiff:'Sezonun rekabet seviyesini ayarla.',cLeague:'Meydan okumanın tarihi ortamını seç.',
+formation:'TAKTİK DİZİLİŞ',styleL:'OYUN STİLİ',diffL:'ZORLUK',leagueL:'ŞAMPİYONA LİGİ',
+hint0:'Başlamak için diziliş, stil, zorluk ve lig seç.',hint1:'Her şey hazır. Bol şans, hocam.',start:'MEYDAN OKUMAYA BAŞLA',
+leagueDesc:'19 unutulmaz {league} takımı + senin XI’in.',
+styles:{posse:'Topa sahip olma',contra:'Kontratak',pressao:'Yüksek pres',equilibrado:'Dengeli',defesa:'Sağlam savunma',ataque:'Tam hücum'},
+styleD:{posse:'Daha çok kontrol ve istikrar.',contra:'Tahmin edilemez: şaşırt ya da yan.',pressao:'Daha çok galibiyet, yüksek savunma riski.',equilibrado:'Bonus yok, risk yok.',defesa:'Farklı yenilgileri önler; hücum azalır.',ataque:'Maksimum hücum; açık skorlar.'},
+diffs:{facil:'Kolay',medio:'Orta',dificil:'Zor',lendario:'Efsanevi'},
+diffD:{facil:'Hafif avantaj. 7 yeniden çekiliş.',medio:'Dengeli, reytingler görünür. 5 yeniden çekiliş.',dificil:'Daha güçlü rakipler, gizli reytingler. 3 çekiliş.',lendario:'İstikrarlı elit. 2 çekiliş.'},
+formD:{'4-3-3':'Üçlü hücum; çok gol, açık savunma.','4-4-2':'Klasik ve dengeli.','3-5-2':'Kalabalık orta saha, yoğun kanatlar.','4-2-3-1':'Çift pivot; 10 numara yaratır.','5-3-2':'Alçak blok, geçilmesi zor.','4-1-4-1':'Ön libero, yalnız forvet.'},
+saiu:'ÇIKAN',resort:'BEĞENMEDİN Mİ? YENİDEN ÇEK',left1:'{n} KALDI',leftN:'{n} KALDI',otherClub:'↺ BAŞKA KULÜP',otherSeason:'↺ BAŞKA SEZON',
+choose:'BİR OYUNCU SEÇ',confirm:'<b>{name}</b> oyuncusunu {pos} olarak onaylamak için tekrar tıkla.',
+incompat:'{name} {pos} oynuyor — bu dizilişte uygun yer yok.',
+nocompat:'Bu kadrodan hiçbir oyuncu boş pozisyonlara uymuyor.',skip:'BAŞKA TAKIM ÇEK →',
+added:'{name} kadroda',filledMsg:'{n}/11 pozisyon dolu.<br>Sıradaki tarihi takımı çek.',drawBtn:'TAKIM ÇEK →',
+complete:'XI tamam!',completeMsg:'Takım reytingi: <b>{ovr}</b>.<br>19 rakibi çekme ve 38 hafta oynama zamanı.',simBtn:'LİGİ SİMÜLE ET →',
+box:'BOX SCORE',round:'HAFTA',simulating:'SEZON SİMÜLE EDİLİYOR · 38 HAFTA',drawing:'TAKIM ÇEKİLİYOR...',
+finalLabel:'FİNAL SIRALAMAN',tabTable:'PUAN DURUMU',tabMatches:'38 MAÇIN',
+th:{team:'TAKIM',p:'P',j:'O',v:'G',e:'B',d:'M',gp:'AG',gc:'YG',sg:'AV',rod:'HF',home:'EV SAHİBİ',score:'SKOR',away:'DEPLASMAN',res:'SONUÇ'},
+win:'GALİBİYET',draw:'BERABERE',loss:'MAĞLUBİYET',resim:'TEKRAR SİMÜLE ET →',newG:'YENİ OYUN',
+zebra:'Her simülasyon farklıdır — reyting önemli ama sürprizler olur.',
+myTeam:'Senin XI’in',
+ph1:'Şampiyon! XI’in rüya ligi {pts} puanla domine etti ({v}G {e}B {d}M).',
+ph2:'Harika sezon: {pts} puan, elit sıra. Şampiyon {champ} ({cpts} p).',
+ph3:'Orta sıra sezonu: {pts} puan. {champ} {cpts} puanla şampiyon.',
+ph4:'Zor sezon: tarihi devlere karşı {pts} puan. Şampiyon {champ}.',
+ph5:'Düşme hattı: {pts} puan. Efsaneler acımadı.',
+valCount:'Takımda 11 oyuncu olmalı.',valDup:'Tekrarlanan oyuncu: {name}.',valPos:'Pozisyon dışı oyuncu: {name}.',nameTitle:'TAKIMINA İSİM VER',namePh:'Takım adı',startChamp:'ŞAMPİYONAYI BAŞLAT →',classFinal:'Final Sıralaması',tabT:'Tablo',tabR:'Haftalar',myBtn:'⭐ Takımım',resBtn:'Sonuç →',backBtn:'← Sıralama',finalTitle:'Sezon Sonucu',ovrL:'Reyting',atkL:'Hücum',defL:'Savunma',formL:'Diziliş',posL:'Final sırası',campL:'Sezon',campTxt:'{j} maç, {v} galibiyet, {e} beraberlik, {d} mağlubiyet',gfL:'Atılan gol',gcL:'Yenen gol',sgL:'Averaj',ptsL:'Puan',close:'Kapat',squadTitle:'Kadro · 11 oyuncu',themeLight:'Açık',themeDark:'Koyu'},
+fr:{tagline:'ALIGNE · SIMULE · GAGNE',slogan:'LE DÉFI DES SUPER EFFECTIFS',eyebrow:'LE DÉFI DES SUPER EFFECTIFS',title:'CONSTRUISEZ LE <span class="xi">XI</span> ULTIME',subtitle:'Choisissez la ligue, définissez votre style de jeu, réglez la formation et voyez si votre super effectif peut gagner une saison historique.',institutional:'1XI est un jeu indépendant de composition et de simulation de super effectifs. Choisissez votre ligue, alignez votre équipe et tentez de gagner une saison historique.',cFormation:'Définissez la structure de base de votre XI.',cStyle:'Choisissez le comportement de votre effectif sur le terrain.',cDiff:'Réglez le niveau de compétition de la saison.',cLeague:'Sélectionnez le cadre historique du défi.',
+formation:'FORMATION TACTIQUE',styleL:'STYLE DE JEU',diffL:'DIFFICULTÉ',leagueL:'LIGUE DU CHAMPIONNAT',
+hint0:'Choisissez formation, style, difficulté et ligue.',hint1:'Tout est prêt. Bonne chance, coach.',start:'LANCER LE DÉFI',
+leagueDesc:'Championnat avec 19 équipes mémorables de {league} + votre XI.',
+styles:{posse:'Possession',contra:'Contre-attaque',pressao:'Pressing haut',equilibrado:'Équilibré',defesa:'Défense solide',ataque:'Attaque totale'},
+styleD:{posse:'Plus de contrôle et de constance.',contra:'Imprévisible : surprendre ou subir.',pressao:'Plus de victoires possibles, gros risque défensif.',equilibrado:'Ni bonus ni risque.',defesa:'Évite les déroutes ; attaque moins productive.',ataque:'Volume offensif maximal.'},
+diffs:{facil:'Facile',medio:'Moyen',dificil:'Difficile',lendario:'Légendaire'},
+diffD:{facil:'Léger avantage. 7 retirages.',medio:'Équilibré, notes visibles. 5 retirages.',dificil:'Adversaires plus forts, notes cachées. 3 retirages.',lendario:'Élite constante. 2 retirages.'},
+formD:{'4-3-3':'Trio offensif ; plus de buts, défense exposée.','4-4-2':'Classique et équilibrée.','3-5-2':'Milieu dense, pistons sollicités.','4-2-3-1':'Double pivot ; le meneur crée.','5-3-2':'Bloc bas, difficile à percer.','4-1-4-1':'Sentinelle, attaquant isolé.'},
+saiu:'TIRAGE',resort:'PAS CONVAINCU ? RETIREZ',left1:'{n} RESTANT',leftN:'{n} RESTANTS',otherClub:'↺ AUTRE CLUB',otherSeason:'↺ AUTRE SAISON',
+choose:'CHOISISSEZ UN JOUEUR',confirm:'Cliquez encore sur <b>{name}</b> pour confirmer comme {pos}.',
+incompat:'{name} joue {pos} — aucune place compatible dans cette formation.',
+nocompat:'Aucun joueur de cet effectif ne correspond aux postes libres.',skip:'TIRER UNE AUTRE ÉQUIPE →',
+added:'{name} titularisé',filledMsg:'{n}/11 postes pourvus.<br>Tirez la prochaine équipe historique.',drawBtn:'TIRER UNE ÉQUIPE →',
+complete:'XI complet !',completeMsg:'Note de l’équipe : <b>{ovr}</b>.<br>Place au tirage des 19 adversaires et aux 38 journées.',simBtn:'SIMULER LA LIGUE →',
+box:'BOX SCORE',round:'JOURNÉE',simulating:'SIMULATION DE LA SAISON · 38 JOURNÉES',drawing:'TIRAGE DE L’ÉQUIPE...',
+finalLabel:'VOTRE CLASSEMENT FINAL',tabTable:'CLASSEMENT FINAL',tabMatches:'VOS 38 MATCHS',
+th:{team:'ÉQUIPE',p:'PTS',j:'J',v:'G',e:'N',d:'P',gp:'BP',gc:'BC',sg:'DIFF',rod:'J',home:'DOMICILE',score:'SCORE',away:'EXTÉRIEUR',res:'RÉSULTAT'},
+win:'VICTOIRE',draw:'NUL',loss:'DÉFAITE',resim:'SIMULER À NOUVEAU →',newG:'NOUVELLE PARTIE',
+zebra:'Chaque simulation est différente — la note compte, mais les surprises existent.',
+myTeam:'Votre XI',
+ph1:'Champion ! Votre XI a dominé la ligue de rêve avec {pts} points ({v}G {e}N {d}P).',
+ph2:'Belle saison : {pts} points et place d’élite. {champ} a pris le titre ({cpts} pts).',
+ph3:'Milieu de tableau : {pts} points. {champ} a remporté le titre avec {cpts} pts.',
+ph4:'Saison difficile : {pts} points face aux géants. {champ} a été champion.',
+ph5:'Zone de relégation : {pts} points. Les légendes n’ont pas pardonné.',
+valCount:'L’équipe doit compter 11 titulaires.',valDup:'Joueur en double : {name}.',valPos:'Joueur hors poste : {name}.',nameTitle:'NOMMEZ VOTRE ÉQUIPE',namePh:'Nom de l’équipe',startChamp:'LANCER LE CHAMPIONNAT →',classFinal:'Classement Final',tabT:'Classement',tabR:'Journées',myBtn:'⭐ Mon Équipe',resBtn:'Résultat →',backBtn:'← Classement',finalTitle:'Bilan de la Saison',ovrL:'Note',atkL:'Attaque',defL:'Défense',formL:'Formation',posL:'Position finale',campL:'Campagne',campTxt:'{j} matchs, {v} victoires, {e} nuls, {d} défaites',gfL:'Buts pour',gcL:'Buts contre',sgL:'Différence de buts',ptsL:'Points',close:'Fermer',squadTitle:'Effectif · 11 titulaires',themeLight:'Clair',themeDark:'Sombre'},
+de:{tagline:'AUFSTELLEN · SIMULIEREN · SIEGEN',slogan:'DIE SUPER-KADER-HERAUSFORDERUNG',eyebrow:'DIE SUPER-KADER-HERAUSFORDERUNG',title:'BAU DIE ULTIMATIVE <span class="xi">XI</span>',subtitle:'Wähle die Liga, lege deinen Spielstil fest, justiere die Formation und teste, ob dein Super-Kader eine historische Saison gewinnen kann.',institutional:'1XI ist ein unabhängiges Spiel zum Aufbau und zur Simulation von Super-Kadern. Wähle deine Liga, stelle dein Team auf und versuche, eine historische Saison zu gewinnen.',cFormation:'Lege die Grundstruktur deiner XI fest.',cStyle:'Wähle, wie sich dein Kader auf dem Platz verhält.',cDiff:'Justiere das Wettbewerbsniveau der Saison.',cLeague:'Wähle den historischen Rahmen der Herausforderung.',
+formation:'TAKTISCHE FORMATION',styleL:'SPIELSTIL',diffL:'SCHWIERIGKEIT',leagueL:'LIGA DER MEISTERSCHAFT',
+hint0:'Wähle Formation, Stil, Schwierigkeit und Liga.',hint1:'Alles bereit. Viel Glück, Trainer.',start:'HERAUSFORDERUNG STARTEN',
+leagueDesc:'Meisterschaft mit 19 legendären {league}-Teams + deiner XI.',
+styles:{posse:'Ballbesitz',contra:'Konter',pressao:'Hohes Pressing',equilibrado:'Ausgewogen',defesa:'Starke Abwehr',ataque:'Volle Offensive'},
+styleD:{posse:'Mehr Kontrolle und Konstanz.',contra:'Unberechenbar: überraschen oder leiden.',pressao:'Mehr Siege möglich, hohes Abwehrrisiko.',equilibrado:'Kein Bonus, kein Risiko.',defesa:'Verhindert Klatschen; weniger Offensive.',ataque:'Maximale Offensive; offene Spiele.'},
+diffs:{facil:'Leicht',medio:'Mittel',dificil:'Schwer',lendario:'Legendär'},
+diffD:{facil:'Leichter Vorteil. 7 Neuziehungen.',medio:'Ausgewogen, Ratings sichtbar. 5 Neuziehungen.',dificil:'Stärkere Gegner, Ratings verdeckt. 3 Neuziehungen.',lendario:'Konstante Elite. 2 Neuziehungen.'},
+formD:{'4-3-3':'Dreierangriff; mehr Tore, offene Abwehr.','4-4-2':'Klassisch und ausgewogen.','3-5-2':'Dichtes Mittelfeld, fleißige Schienenspieler.','4-2-3-1':'Doppelsechs; Zehner kreiert.','5-3-2':'Tiefer Block, schwer zu knacken.','4-1-4-1':'Absicherender Sechser, isolierter Stürmer.'},
+saiu:'GEZOGEN',resort:'NICHT ÜBERZEUGT? NEU ZIEHEN',left1:'{n} ÜBRIG',leftN:'{n} ÜBRIG',otherClub:'↺ ANDERER KLUB',otherSeason:'↺ ANDERE SAISON',
+choose:'WÄHLE EINEN SPIELER',confirm:'Klicke erneut auf <b>{name}</b>, um ihn als {pos} zu bestätigen.',
+incompat:'{name} spielt {pos} — kein passender Platz in dieser Formation.',
+nocompat:'Kein Spieler dieses Kaders passt auf die offenen Positionen.',skip:'ANDERES TEAM ZIEHEN →',
+added:'{name} aufgestellt',filledMsg:'{n}/11 Positionen besetzt.<br>Zieh das nächste historische Team.',drawBtn:'TEAM ZIEHEN →',
+complete:'XI komplett!',completeMsg:'Team-Rating: <b>{ovr}</b>.<br>Zeit, 19 Gegner zu ziehen und 38 Spieltage zu spielen.',simBtn:'LIGA SIMULIEREN →',
+box:'BOX SCORE',round:'SPIELTAG',simulating:'SAISON WIRD SIMULIERT · 38 SPIELTAGE',drawing:'TEAM WIRD GEZOGEN...',
+finalLabel:'DEINE ENDPLATZIERUNG',tabTable:'ABSCHLUSSTABELLE',tabMatches:'DEINE 38 SPIELE',
+th:{team:'TEAM',p:'PKT',j:'SP',v:'S',e:'U',d:'N',gp:'TORE',gc:'GT',sg:'TD',rod:'ST',home:'HEIM',score:'ERGEBNIS',away:'AUSWÄRTS',res:'RESULTAT'},
+win:'SIEG',draw:'REMIS',loss:'NIEDERLAGE',resim:'ERNEUT SIMULIEREN →',newG:'NEUES SPIEL',
+zebra:'Jede Simulation ist anders — das Rating zählt, aber Überraschungen passieren.',
+myTeam:'Deine XI',
+ph1:'Meister! Deine XI dominierte die Traumliga mit {pts} Punkten ({v}S {e}U {d}N).',
+ph2:'Starke Saison: {pts} Punkte, Eliteplatz. {champ} holte den Titel ({cpts} Pkt.).',
+ph3:'Mittelfeld-Saison: {pts} Punkte. {champ} wurde Meister mit {cpts} Pkt.',
+ph4:'Harte Saison: {pts} Punkte gegen historische Riesen. {champ} wurde Meister.',
+ph5:'Abstiegszone: {pts} Punkte. Die Legenden kannten keine Gnade.',
+valCount:'Das Team braucht 11 Spieler.',valDup:'Doppelter Spieler: {name}.',valPos:'Spieler auf falscher Position: {name}.',nameTitle:'BENENNE DEIN TEAM',namePh:'Teamname',startChamp:'MEISTERSCHAFT STARTEN →',classFinal:'Abschlusstabelle',tabT:'Tabelle',tabR:'Spieltage',myBtn:'⭐ Mein Team',resBtn:'Ergebnis →',backBtn:'← Tabelle',finalTitle:'Saisonbilanz',ovrL:'Rating',atkL:'Angriff',defL:'Abwehr',formL:'Formation',posL:'Endplatzierung',campL:'Saison',campTxt:'{j} Spiele, {v} Siege, {e} Remis, {d} Niederlagen',gfL:'Tore',gcL:'Gegentore',sgL:'Tordifferenz',ptsL:'Punkte',close:'Schließen',squadTitle:'Kader · 11 Spieler',themeLight:'Hell',themeDark:'Dunkel'}
+};
+let LANG='pt';
+/* ===== ThemeToggle (componente) ===== */
+let THEME='dark';
+try{THEME=localStorage.getItem('theme')||'dark';}catch(e){}
+document.documentElement.setAttribute('data-theme',THEME);
+function applyTheme(th){
+  THEME=(th==='light')?'light':'dark';
+  try{localStorage.setItem('theme',THEME);}catch(e){}
+  document.documentElement.setAttribute('data-theme',THEME);
+  renderThemeToggle();
+}
+function renderThemeToggle(){
+  const l=document.getElementById('ttLight'),d=document.getElementById('ttDark');
+  if(!l||!d)return;
+  l.textContent='☀ '+t('themeLight');
+  d.textContent='🌙 '+t('themeDark');
+  l.classList.toggle('active',THEME==='light');
+  d.classList.toggle('active',THEME==='dark');
+}
+function t(key,vars){let s=I18N[LANG][key];if(s===undefined)s=I18N.pt[key]||key;if(vars)for(const k in vars)s=s.split('{'+k+'}').join(vars[k]);return s;}
+function tn(group,key){const g=I18N[LANG][group]||I18N.pt[group];return g[key]||I18N.pt[group][key]||key;}
+function ordinal(n){
+  if(LANG==='en'){const s=['th','st','nd','rd'],v=n%100;return n+(s[(v-20)%10]||s[v]||s[0]);}
+  if(LANG==='fr')return n===1?'1er':n+'e';
+  if(LANG==='tr'||LANG==='de')return n+'.';
+  return n+'º';
+}
+function setLang(l){LANG=l;document.getElementById('langSel').value=l;renderStatic();closeMyTeam();
+  if(S.screen==='screenConfig')renderConfig();
+  if(S.screen==='screenBuild')renderBuild();
+  if(S.screen==='screenResults')renderResults();
+  if(S.screen==='screenFinal')renderFinal();
+}
+function renderStatic(){document.getElementById('navSlogan').textContent=t('slogan');document.getElementById('navTag').textContent=t('tagline');renderThemeToggle();updateNavStatus();}
+function updateNavStatus(){
+  const el=document.getElementById('navStatus');
+  if(S.formation&&S.style&&S.diff&&S.league&&S.screen!=='screenConfig'){
+    el.textContent=S.formation+' · '+tn('styles',S.style).toUpperCase()+' · '+tn('diffs',S.diff).toUpperCase()+' · '+LEAGUES[S.league].name.toUpperCase();
+  } else el.textContent='';
+}
+
+/* ===================== DATA ===================== */
+const FLAGS = {
+  eng:'<svg class="liga-flag" viewBox="0 0 20 14"><rect width="20" height="14" fill="#012169"/><path d="M0,0 L20,14 M20,0 L0,14" stroke="#fff" stroke-width="2.8"/><path d="M0,0 L20,14 M20,0 L0,14" stroke="#C8102E" stroke-width="1.8"/><path d="M10,0 V14 M0,7 H20" stroke="#fff" stroke-width="4.7"/><path d="M10,0 V14 M0,7 H20" stroke="#C8102E" stroke-width="3"/></svg>',
+  esp:'<svg class="liga-flag" viewBox="0 0 20 14"><rect width="20" height="14" fill="#AA151B"/><rect y="3.5" width="20" height="7" fill="#F1BF00"/></svg>',
+  ita:'<svg class="liga-flag" viewBox="0 0 20 14"><rect width="6.7" height="14" fill="#009246"/><rect x="6.7" width="6.6" height="14" fill="#fff"/><rect x="13.3" width="6.7" height="14" fill="#CE2B37"/></svg>',
+  ger:'<svg class="liga-flag" viewBox="0 0 20 14"><rect width="20" height="4.7" fill="#000"/><rect y="4.7" width="20" height="4.6" fill="#DD0000"/><rect y="9.3" width="20" height="4.7" fill="#FFCE00"/></svg>',
+  fra:'<svg class="liga-flag" viewBox="0 0 20 14"><rect width="6.7" height="14" fill="#002395"/><rect x="6.7" width="6.6" height="14" fill="#fff"/><rect x="13.3" width="6.7" height="14" fill="#ED2939"/></svg>',
+  tur:'<svg class="liga-flag" viewBox="0 0 20 14"><rect width="20" height="14" fill="#E30A17"/><circle cx="7.5" cy="7" r="3.2" fill="#fff"/><circle cx="8.3" cy="7" r="2.6" fill="#E30A17"/><polygon points="10.6,7 14.4,5.8 12.1,7 14.4,8.2" fill="#fff"/></svg>'
+};
+
+// jogador: [num, nome, 'POSPRINCIPAL' ou 'PRINCIPAL/SECUNDARIA', ovr]
+
+/* =====================================================================
+   DADOS · MEMORABLE_TEAMS — catálogo central de times memoráveis
+   ---------------------------------------------------------------------
+   Cada entrada representa um time/temporada que pode aparecer como
+   ADVERSÁRIO no campeonato. Os 20 elencos JOGÁVEIS de cada liga (ver
+   LEAGUES[liga].squads) também possuem um id correspondente neste
+   catálogo (mesmo clube+ano), permitindo cooldown/histórico unificado.
+
+   COMO ADICIONAR UM NOVO TIME MEMORÁVEL (apenas adversário):
+     {id: teamIdOf-equivalente (gerado automaticamente, mas pode ser
+          escrito manualmente seguindo o padrão "<liga>_<clube-slug>_<ano-slug>"),
+      league:'english'|'spanish'|'italian'|'german'|'french'|'turkish',
+      country:'Nome do país', clube:'Nome do Clube', ano:'2003–04',
+      strength:90, style:'Estilo de jogo (opcional)',
+      description:'Por que é memorável (opcional)', tags:['opcional']}
+
+   COMO TORNAR UM TIME JOGÁVEL: adicione um elenco em
+   LEAGUES[liga].squads com clube/ano IDÊNTICOS aos do catálogo — o
+   vínculo é feito automaticamente via teamIdOf(liga,clube,ano).
+===================================================================== */
+const MEMORABLE_TEAMS = [
+  {id:"english_manchester-united_199899",league:"english",country:"Inglaterra",clube:"Manchester United",ano:"1998–99",strength:91,style:"Ataque incansável até o fim",description:"O ano do Triplete com viradas históricas",tags:["triplete"]},
+  {id:"english_arsenal_200304",league:"english",country:"Inglaterra",clube:"Arsenal",ano:"2003–04",strength:92,style:"Posse, velocidade e equilíbrio",description:"Campanha invicta dos Invincibles",tags:["invencível","elenco lendário"]},
+  {id:"english_chelsea_200405",league:"english",country:"Inglaterra",clube:"Chelsea",ano:"2004–05",strength:90,style:"Solidez defensiva recorde",description:"Campeão com defesa histórica sob Mourinho"},
+  {id:"english_manchester-city_201718",league:"english",country:"Inglaterra",clube:"Manchester City",ano:"2017–18",strength:91,style:"Posse total e amplitude",description:"Os Centurions, campeões com 100 pontos",tags:["centurions"]},
+  {id:"english_liverpool_201920",league:"english",country:"Inglaterra",clube:"Liverpool",ano:"2019–20",strength:92,style:"Pressing vertical intenso",description:"Fim de 30 anos de espera pelo título"},
+  {id:"english_leicester_201516",league:"english",country:"Inglaterra",clube:"Leicester",ano:"2015–16",strength:84,style:"Contra-ataque letal e disciplinado",description:"O maior conto de fadas do futebol moderno",tags:["zebra histórica"]},
+  {id:"english_manchester-united_200708",league:"english",country:"Inglaterra",clube:"Manchester United",ano:"2007–08",strength:91},
+  {id:"english_chelsea_200910",league:"english",country:"Inglaterra",clube:"Chelsea",ano:"2009–10",strength:88},
+  {id:"english_arsenal_199798",league:"english",country:"Inglaterra",clube:"Arsenal",ano:"1997–98",strength:87},
+  {id:"english_manchester-city_202223",league:"english",country:"Inglaterra",clube:"Manchester City",ano:"2022–23",strength:93,style:"Controle absoluto com Haaland",description:"Temporada da tríplice coroa",tags:["treble"]},
+  {id:"english_liverpool_200809",league:"english",country:"Inglaterra",clube:"Liverpool",ano:"2008–09",strength:87},
+  {id:"english_tottenham_201617",league:"english",country:"Inglaterra",clube:"Tottenham",ano:"2016–17",strength:85},
+  {id:"english_newcastle_199596",league:"english",country:"Inglaterra",clube:"Newcastle",ano:"1995–96",strength:83},
+  {id:"english_blackburn_199495",league:"english",country:"Inglaterra",clube:"Blackburn",ano:"1994–95",strength:82},
+  {id:"english_manchester-united_201213",league:"english",country:"Inglaterra",clube:"Manchester United",ano:"2012–13",strength:88},
+  {id:"english_chelsea_201617",league:"english",country:"Inglaterra",clube:"Chelsea",ano:"2016–17",strength:88},
+  {id:"english_arsenal_200102",league:"english",country:"Inglaterra",clube:"Arsenal",ano:"2001–02",strength:88},
+  {id:"english_liverpool_202122",league:"english",country:"Inglaterra",clube:"Liverpool",ano:"2021–22",strength:91},
+  {id:"english_everton_198485",league:"english",country:"Inglaterra",clube:"Everton",ano:"1984–85",strength:81},
+  {id:"spanish_barcelona_201011",league:"spanish",country:"Espanha",clube:"Barcelona",ano:"2010–11",strength:94,style:"Tiki-taka em estado puro",description:"Um dos melhores times da história do futebol",tags:["tiki-taka"]},
+  {id:"spanish_real-madrid_201617",league:"spanish",country:"Espanha",clube:"Real Madrid",ano:"2016–17",strength:93},
+  {id:"spanish_atletico_201314",league:"spanish",country:"Espanha",clube:"Atlético",ano:"2013–14",strength:88},
+  {id:"spanish_barcelona_200809",league:"spanish",country:"Espanha",clube:"Barcelona",ano:"2008–09",strength:93,style:"Posse e pressão alta",description:"O sextete histórico de Guardiola",tags:["sextete"]},
+  {id:"spanish_real-madrid_201112",league:"spanish",country:"Espanha",clube:"Real Madrid",ano:"2011–12",strength:92},
+  {id:"spanish_valencia_200304",league:"spanish",country:"Espanha",clube:"Valencia",ano:"2003–04",strength:86},
+  {id:"spanish_barcelona_201415",league:"spanish",country:"Espanha",clube:"Barcelona",ano:"2014–15",strength:93},
+  {id:"spanish_real-madrid_200102",league:"spanish",country:"Espanha",clube:"Real Madrid",ano:"2001–02",strength:90,style:"Galácticos em campo",description:"Era dos Galácticos com Zidane e Figo",tags:["galácticos"]},
+  {id:"spanish_deportivo_199900",league:"spanish",country:"Espanha",clube:"Deportivo",ano:"1999–00",strength:84},
+  {id:"spanish_sevilla_200607",league:"spanish",country:"Espanha",clube:"Sevilla",ano:"2006–07",strength:84},
+  {id:"spanish_barcelona_200506",league:"spanish",country:"Espanha",clube:"Barcelona",ano:"2005–06",strength:91},
+  {id:"spanish_real-madrid_198687",league:"spanish",country:"Espanha",clube:"Real Madrid",ano:"1986–87",strength:88,style:"A Quinta del Buitre",description:"Geração lendária revelada por Butragueño"},
+  {id:"spanish_atletico_202021",league:"spanish",country:"Espanha",clube:"Atlético",ano:"2020–21",strength:87},
+  {id:"spanish_valencia_200102",league:"spanish",country:"Espanha",clube:"Valencia",ano:"2001–02",strength:85},
+  {id:"spanish_real-sociedad_200203",league:"spanish",country:"Espanha",clube:"Real Sociedad",ano:"2002–03",strength:82},
+  {id:"spanish_barcelona_199192",league:"spanish",country:"Espanha",clube:"Barcelona",ano:"1991–92",strength:89,style:"O Dream Team de Cruyff",description:"Primeira Copa da Europa do clube",tags:["dream team"]},
+  {id:"spanish_villarreal_200506",league:"spanish",country:"Espanha",clube:"Villarreal",ano:"2005–06",strength:82},
+  {id:"spanish_real-madrid_202122",league:"spanish",country:"Espanha",clube:"Real Madrid",ano:"2021–22",strength:90},
+  {id:"spanish_athletic_198384",league:"spanish",country:"Espanha",clube:"Athletic",ano:"1983–84",strength:81},
+  {id:"italian_milan_200607",league:"italian",country:"Itália",clube:"Milan",ano:"2006–07",strength:91},
+  {id:"italian_internazionale_200910",league:"italian",country:"Itália",clube:"Internazionale",ano:"2009–10",strength:91,style:"Pragmatismo letal",description:"O Triplete histórico sob Mourinho",tags:["triplete"]},
+  {id:"italian_juventus_199596",league:"italian",country:"Itália",clube:"Juventus",ano:"1995–96",strength:90},
+  {id:"italian_milan_199394",league:"italian",country:"Itália",clube:"Milan",ano:"1993–94",strength:92,style:"Pressão e linha alta revolucionárias",description:"A era Sacchi/Capello que mudou o futebol"},
+  {id:"italian_juventus_201617",league:"italian",country:"Itália",clube:"Juventus",ano:"2016–17",strength:89},
+  {id:"italian_roma_200001",league:"italian",country:"Itália",clube:"Roma",ano:"2000–01",strength:87},
+  {id:"italian_internazionale_199798",league:"italian",country:"Itália",clube:"Internazionale",ano:"1997–98",strength:88},
+  {id:"italian_lazio_199900",league:"italian",country:"Itália",clube:"Lazio",ano:"1999–00",strength:87},
+  {id:"italian_milan_200304",league:"italian",country:"Itália",clube:"Milan",ano:"2003–04",strength:91},
+  {id:"italian_juventus_200203",league:"italian",country:"Itália",clube:"Juventus",ano:"2002–03",strength:88},
+  {id:"italian_napoli_198687",league:"italian",country:"Itália",clube:"Napoli",ano:"1986–87",strength:88,style:"O talento absoluto de Maradona",description:"Primeiro Scudetto da história do Napoli",tags:["maradona"]},
+  {id:"italian_internazionale_202021",league:"italian",country:"Itália",clube:"Internazionale",ano:"2020–21",strength:87},
+  {id:"italian_fiorentina_199899",league:"italian",country:"Itália",clube:"Fiorentina",ano:"1998–99",strength:83},
+  {id:"italian_parma_199899",league:"italian",country:"Itália",clube:"Parma",ano:"1998–99",strength:85},
+  {id:"italian_milan_198889",league:"italian",country:"Itália",clube:"Milan",ano:"1988–89",strength:92,style:"Pressão e linha alta revolucionárias",description:"A era Sacchi que mudou o futebol"},
+  {id:"italian_juventus_201112",league:"italian",country:"Itália",clube:"Juventus",ano:"2011–12",strength:87,style:"Solidez invicta",description:"Campeão invicto sob Antonio Conte",tags:["invencível"]},
+  {id:"italian_roma_201314",league:"italian",country:"Itália",clube:"Roma",ano:"2013–14",strength:84},
+  {id:"italian_napoli_202223",league:"italian",country:"Itália",clube:"Napoli",ano:"2022–23",strength:88},
+  {id:"italian_sampdoria_199091",league:"italian",country:"Itália",clube:"Sampdoria",ano:"1990–91",strength:84},
+  {id:"german_bayern_201213",league:"german",country:"Alemanha",clube:"Bayern",ano:"2012–13",strength:93,style:"Pressing e verticalidade",description:"Triplete histórico do Bayern",tags:["triplete"]},
+  {id:"german_borussia-dortmund_201011",league:"german",country:"Alemanha",clube:"Borussia Dortmund",ano:"2010–11",strength:88,style:"Gegenpressing jovem",description:"Título da geração Klopp"},
+  {id:"german_bayern_201920",league:"german",country:"Alemanha",clube:"Bayern",ano:"2019–20",strength:92},
+  {id:"german_werder-bremen_200304",league:"german",country:"Alemanha",clube:"Werder Bremen",ano:"2003–04",strength:84},
+  {id:"german_bayern_200001",league:"german",country:"Alemanha",clube:"Bayern",ano:"2000–01",strength:89},
+  {id:"german_borussia-dortmund_199697",league:"german",country:"Alemanha",clube:"Borussia Dortmund",ano:"1996–97",strength:87},
+  {id:"german_bayern_197374",league:"german",country:"Alemanha",clube:"Bayern",ano:"1973–74",strength:91,style:"Base do futebol total alemão",description:"Núcleo campeão europeu da década de 70"},
+  {id:"german_stuttgart_200607",league:"german",country:"Alemanha",clube:"Stuttgart",ano:"2006–07",strength:82},
+  {id:"german_borussia-m-u2019gladbach_197677",league:"german",country:"Alemanha",clube:"Borussia M\\u2019gladbach",ano:"1976–77",strength:85},
+  {id:"german_bayern_201516",league:"german",country:"Alemanha",clube:"Bayern",ano:"2015–16",strength:91},
+  {id:"german_leverkusen_200102",league:"german",country:"Alemanha",clube:"Leverkusen",ano:"2001–02",strength:86},
+  {id:"german_hamburgo_198283",league:"german",country:"Alemanha",clube:"Hamburgo",ano:"1982–83",strength:85},
+  {id:"german_borussia-dortmund_201213",league:"german",country:"Alemanha",clube:"Borussia Dortmund",ano:"2012–13",strength:88},
+  {id:"german_wolfsburg_200809",league:"german",country:"Alemanha",clube:"Wolfsburg",ano:"2008–09",strength:82},
+  {id:"german_bayern_199900",league:"german",country:"Alemanha",clube:"Bayern",ano:"1999–00",strength:88},
+  {id:"german_schalke_200910",league:"german",country:"Alemanha",clube:"Schalke",ano:"2009–10",strength:82},
+  {id:"german_kaiserslautern_199798",league:"german",country:"Alemanha",clube:"Kaiserslautern",ano:"1997–98",strength:81},
+  {id:"german_leverkusen_202324",league:"german",country:"Alemanha",clube:"Leverkusen",ano:"2023–24",strength:88,style:"Posse paciente e consistência",description:"Campanha invicta inédita na Alemanha",tags:["invencível"]},
+  {id:"german_colonia_197778",league:"german",country:"Alemanha",clube:"Colônia",ano:"1977–78",strength:81},
+  {id:"french_psg_201516",league:"french",country:"França",clube:"PSG",ano:"2015–16",strength:90,style:"Ataque estelar e domínio nacional",description:"Campanha dominante no Campeonato Francês"},
+  {id:"french_lyon_200506",league:"french",country:"França",clube:"Lyon",ano:"2005–06",strength:87},
+  {id:"french_olympique-de-marseille_199091",league:"french",country:"França",clube:"Olympique de Marseille",ano:"1990–91",strength:88,style:"Ataque ofensivo histórico",description:"Geração que marcou a final europeia de 1991"},
+  {id:"french_monaco_201617",league:"french",country:"França",clube:"Monaco",ano:"2016–17",strength:87,style:"Velocidade jovem letal",description:"Campeão revelando talentos como Mbappé"},
+  {id:"french_psg_201920",league:"french",country:"França",clube:"PSG",ano:"2019–20",strength:90},
+  {id:"french_bordeaux_200809",league:"french",country:"França",clube:"Bordeaux",ano:"2008–09",strength:83},
+  {id:"french_lyon_200708",league:"french",country:"França",clube:"Lyon",ano:"2007–08",strength:86},
+  {id:"french_saint-etienne_197576",league:"french",country:"França",clube:"Saint-Étienne",ano:"1975–76",strength:85,style:"Os Verts lendários",description:"Geração que encantou a Europa nos anos 70"},
+  {id:"french_psg_199394",league:"french",country:"França",clube:"PSG",ano:"1993–94",strength:85},
+  {id:"french_nantes_199495",league:"french",country:"França",clube:"Nantes",ano:"1994–95",strength:83},
+  {id:"french_monaco_199697",league:"french",country:"França",clube:"Monaco",ano:"1996–97",strength:83},
+  {id:"french_lille_201011",league:"french",country:"França",clube:"Lille",ano:"2010–11",strength:83},
+  {id:"french_lyon_200304",league:"french",country:"França",clube:"Lyon",ano:"2003–04",strength:85},
+  {id:"french_olympique-de-marseille_200910",league:"french",country:"França",clube:"Olympique de Marseille",ano:"2009–10",strength:84},
+  {id:"french_psg_202223",league:"french",country:"França",clube:"PSG",ano:"2022–23",strength:89,style:"Ataque estelar com Messi, Mbappé e Neymar",description:"Tríplice ataque histórico do futebol francês"},
+  {id:"french_auxerre_199596",league:"french",country:"França",clube:"Auxerre",ano:"1995–96",strength:80},
+  {id:"french_montpellier_201112",league:"french",country:"França",clube:"Montpellier",ano:"2011–12",strength:81},
+  {id:"french_lens_199798",league:"french",country:"França",clube:"Lens",ano:"1997–98",strength:80},
+  {id:"french_nice_195859",league:"french",country:"França",clube:"Nice",ano:"1958–59",strength:78},
+  {id:"turkish_galatasaray_199900",league:"turkish",country:"Turquia",clube:"Galatasaray",ano:"1999–00",strength:86,style:"Equilíbrio e experiência europeia",description:"Campanha histórica rumo a títulos europeus"},
+  {id:"turkish_fenerbahce_200708",league:"turkish",country:"Turquia",clube:"Fenerbahçe",ano:"2007–08",strength:84},
+  {id:"turkish_besiktas_201617",league:"turkish",country:"Turquia",clube:"Beşiktaş",ano:"2016–17",strength:83,style:"Equilíbrio com talentos ofensivos",description:"Campanha sólida sob Şenol Güneş"},
+  {id:"turkish_galatasaray_201213",league:"turkish",country:"Turquia",clube:"Galatasaray",ano:"2012–13",strength:84},
+  {id:"turkish_trabzonspor_202122",league:"turkish",country:"Turquia",clube:"Trabzonspor",ano:"2021–22",strength:82},
+  {id:"turkish_fenerbahce_200405",league:"turkish",country:"Turquia",clube:"Fenerbahçe",ano:"2004–05",strength:83},
+  {id:"turkish_besiktas_200203",league:"turkish",country:"Turquia",clube:"Beşiktaş",ano:"2002–03",strength:82},
+  {id:"turkish_galatasaray_201819",league:"turkish",country:"Turquia",clube:"Galatasaray",ano:"2018–19",strength:83},
+  {id:"turkish_fenerbahce_201314",league:"turkish",country:"Turquia",clube:"Fenerbahçe",ano:"2013–14",strength:82},
+  {id:"turkish_bursaspor_200910",league:"turkish",country:"Turquia",clube:"Bursaspor",ano:"2009–10",strength:79},
+  {id:"turkish_galatasaray_199394",league:"turkish",country:"Turquia",clube:"Galatasaray",ano:"1993–94",strength:83},
+  {id:"turkish_besiktas_199192",league:"turkish",country:"Turquia",clube:"Beşiktaş",ano:"1991–92",strength:81},
+  {id:"turkish_trabzonspor_199596",league:"turkish",country:"Turquia",clube:"Trabzonspor",ano:"1995–96",strength:80},
+  {id:"turkish_fenerbahce_201011",league:"turkish",country:"Turquia",clube:"Fenerbahçe",ano:"2010–11",strength:82},
+  {id:"turkish_galatasaray_202324",league:"turkish",country:"Turquia",clube:"Galatasaray",ano:"2023–24",strength:84,style:"Ataque moderno e versátil",description:"Campanha dominante na Süper Lig"},
+  {id:"turkish_basaksehir_201920",league:"turkish",country:"Turquia",clube:"Başakşehir",ano:"2019–20",strength:80},
+  {id:"turkish_besiktas_202021",league:"turkish",country:"Turquia",clube:"Beşiktaş",ano:"2020–21",strength:81},
+  {id:"turkish_trabzonspor_198384",league:"turkish",country:"Turquia",clube:"Trabzonspor",ano:"1983–84",strength:79},
+  {id:"turkish_fenerbahce_198889",league:"turkish",country:"Turquia",clube:"Fenerbahçe",ano:"1988–89",strength:80}
+];
+
+/* =====================================================================
+   TEAM RANDOMIZER — sorteio de times memoráveis com cooldown
+   ---------------------------------------------------------------------
+   REGRAS:
+   1) Nunca repete o mesmo teamId dentro da MESMA RODADA (campeonato
+      atual) — controlado via `excludedTeamIds` (S.roundTeamIds).
+   2) Entre rodadas/partidas diferentes, cada time sorteado entra num
+      histórico recente por liga (cooldown = 6). Times no cooldown só
+      voltam a ser sorteáveis depois que outros 6 tiverem sido usados.
+   3) Se o pool elegível ficar pequeno demais (após aplicar as regras
+      1 e 2), o cooldown é relaxado gradualmente, liberando primeiro os
+      times mais ANTIGOS do histórico, até existir opção suficiente.
+   4) O histórico é persistido em localStorage (chave '1xi_recent_teams')
+      para que o cooldown valha entre sessões de jogo.
+===================================================================== */
+
+const RECENT_TEAMS_KEY = '1xi_recent_teams';
+const TEAM_COOLDOWN = 6;
+
+function loadRecentTeams(){
+  try{
+    const raw = localStorage.getItem(RECENT_TEAMS_KEY);
+    if(!raw) return {};
+    const parsed = JSON.parse(raw);
+    return (parsed && typeof parsed==='object') ? parsed : {};
+  }catch(e){ return {}; }
+}
+function saveRecentTeams(map){
+  try{ localStorage.setItem(RECENT_TEAMS_KEY, JSON.stringify(map)); }catch(e){}
+}
+// histórico em memória, carregado uma vez (persistido a cada atualização)
+let recentTeamsByLeague = loadRecentTeams();
+
+function shuffleArray(arr){
+  const a=[...arr];
+  for(let i=a.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+
+// Retorna todos os times memoráveis de uma liga (catálogo MEMORABLE_TEAMS)
+function getLeagueTeamPool(leagueId){
+  return MEMORABLE_TEAMS.filter(tm=>tm.league===leagueId);
+}
+
+// Aplica as regras de elegibilidade: fora da rodada atual e fora do cooldown
+function getEligibleTeams(leagueId, excludedTeamIds, cooldownSet){
+  const pool=getLeagueTeamPool(leagueId);
+  return pool.filter(tm=>!excludedTeamIds.includes(tm.id) && !cooldownSet.has(tm.id));
+}
+
+// Atualiza o histórico recente (FIFO, máx = cooldown) após usar um time
+function updateRecentHistory(leagueId, teamId){
+  const hist = recentTeamsByLeague[leagueId] || [];
+  const next = hist.filter(id=>id!==teamId);
+  next.push(teamId);
+  while(next.length>TEAM_COOLDOWN) next.shift();
+  recentTeamsByLeague[leagueId]=next;
+  saveRecentTeams(recentTeamsByLeague);
+}
+
+/* getRandomMemorableTeam
+   params:
+     - leagueId: 'english'|'spanish'|'italian'|'german'|'french'|'turkish'
+     - excludedTeamIds: array de ids que NUNCA podem repetir nesta chamada
+       (ex.: adversários já sorteados na rodada atual)
+     - cooldown: tamanho do histórico (default TEAM_COOLDOWN = 6)
+     - onlyIds: opcional — restringe o sorteio a um subconjunto de ids
+       (útil para sortear apenas elencos jogáveis, por exemplo)
+   Prioridade de fallback:
+     1. pool da liga -> remove excludedTeamIds -> remove cooldown -> sorteia
+     2. se pool elegível vazio, libera gradualmente os mais ANTIGOS do
+        cooldown (um a um) até existir pelo menos 1 opção
+     3. NUNCA repete um id presente em excludedTeamIds (regra absoluta)
+*/
+function getRandomMemorableTeam({leagueId, excludedTeamIds=[], cooldown=TEAM_COOLDOWN, onlyIds=null}){
+  let pool=getLeagueTeamPool(leagueId);
+  if(onlyIds) pool=pool.filter(tm=>onlyIds.includes(tm.id));
+
+  let hist = (recentTeamsByLeague[leagueId]||[]).slice(0,cooldown);
+  let cooldownSet=new Set(hist);
+
+  let eligible = pool.filter(tm=>!excludedTeamIds.includes(tm.id) && !cooldownSet.has(tm.id));
+
+  // fallback: libera gradualmente os mais antigos do cooldown
+  while(eligible.length===0 && hist.length>0){
+    hist=hist.slice(1); // remove o mais antigo
+    cooldownSet=new Set(hist);
+    eligible=pool.filter(tm=>!excludedTeamIds.includes(tm.id) && !cooldownSet.has(tm.id));
+  }
+  // último fallback absoluto: qualquer time fora da rodada atual
+  if(eligible.length===0){
+    eligible=pool.filter(tm=>!excludedTeamIds.includes(tm.id));
+  }
+  if(eligible.length===0) return null; // pool esgotado (não deve ocorrer com 19+ times)
+
+  const chosen=shuffleArray(eligible)[0];
+  updateRecentHistory(leagueId, chosen.id);
+  return chosen;
+}
+
+
+/* =====================================================================
+   teamIdOf — gera o id único usado tanto em MEMORABLE_TEAMS quanto nos
+   elencos jogáveis de LEAGUES[liga].squads, para que cooldown e
+   histórico funcionem de forma unificada entre catálogo e elencos.
+===================================================================== */
+function teamIdOf(leagueKey, clube, ano){
+  const lid = LEAGUE_ID[leagueKey];
+  const slug = s => s.toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+    .replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');
+  return lid+'_'+slug(clube)+'_'+slug(ano);
+}
+const LEAGUE_ID = {
+  premier:'english', laliga:'spanish', seriea:'italian',
+  bundesliga:'german', ligue1:'french', superlig:'turkish'
+};
+
+/* drawPlayableSquad — sorteia o PRÓXIMO elenco jogável para a montagem.
+   Usa o mesmo randomizer de cooldown (6) sobre os 20 elencos da liga
+   escolhida, mas com `onlyIds` restrito aos ids dos elencos jogáveis
+   (os mesmos 20 de LEAGUES[liga].squads), e excludedTeamIds = elenco
+   atual (para nunca repetir o time imediatamente anterior).
+*/
+function drawPlayableSquad(){
+  const leagueKey=S.league;
+  const lid=LEAGUE_ID[leagueKey];
+  const squads=LEAGUES[leagueKey].squads;
+  const onlyIds=squads.map(sq=>teamIdOf(leagueKey,sq.clube,sq.ano));
+  const excluded=S.currentSquadId?[S.currentSquadId]:[];
+
+  const picked=getRandomMemorableTeam({leagueId:lid, excludedTeamIds:excluded, cooldown:TEAM_COOLDOWN, onlyIds});
+  let squad;
+  if(picked){
+    squad=squads.find(sq=>teamIdOf(leagueKey,sq.clube,sq.ano)===picked.id);
+    S.currentSquadId=picked.id;
+  }else{
+    // fallback absoluto: sorteio simples entre os 20 (não deve ocorrer)
+    squad=squads[Math.floor(Math.random()*squads.length)];
+    S.currentSquadId=teamIdOf(leagueKey,squad.clube,squad.ano);
+  }
+  S.currentSquad=squad;
+  return squad;
+}
+
+
+const LEAGUES = {
+  premier: { name:'Premier League', flag:FLAGS.eng,
+    squads:[
+      {clube:"Chelsea",ano:"2004–05",tag:"CHE 05",players:[[1,"Cech","GOL",89],[2,"P. Ferreira","LD",79],[26,"Terry","ZAG",91],[6,"Gallas","ZAG/LE",84],[3,"Bridge","LE",77],[13,"Makelele","VOL",90],[8,"Lampard","MC/MEI",93],[4,"Tiago","MC",79],[7,"Robben","PD/PE",88],[10,"Drogba","CA",87],[15,"Duff","PE/PD",82],[9,"Gudjohnsen","CA/MEI",81],[24,"J. Cole","MEI/PE",80]]},
+      {clube:"Manchester United",ano:"1998–99",tag:"MUN 99",players:[[1,"Schmeichel","GOL",91],[2,"G. Neville","LD",84],[5,"Stam","ZAG",91],[6,"Johnsen","ZAG",82],[3,"Irwin","LE",83],[16,"Keane","VOL/MC",91],[8,"Butt","MC/VOL",80],[18,"Scholes","MEI/MC",89],[7,"Beckham","PD",90],[9,"Yorke","CA",87],[11,"Giggs","PE",89],[20,"Solskjær","CA",85],[19,"Sheringham","CA/MEI",83]]},
+      {clube:"Arsenal",ano:"2003–04",tag:"ARS 04",players:[[1,"Lehmann","GOL",85],[12,"Lauren","LD",81],[23,"Campbell","ZAG",88],[28,"Touré","ZAG",85],[3,"A. Cole","LE",87],[4,"Vieira","VOL/MC",92],[15,"Gilberto","VOL/MC",84],[8,"Ljungberg","MEI/PD",85],[7,"Pirès","PD/PE",89],[14,"Henry","CA/PE",95],[11,"Reyes","PE/CA",82],[10,"Bergkamp","CA/MEI",87],[19,"Edu","MC",79]]},
+      {clube:"Manchester City",ano:"2017–18",tag:"MCI 18",players:[[31,"Ederson","GOL",88],[2,"Walker","LD",86],[30,"Otamendi","ZAG",84],[5,"Stones","ZAG",83],[18,"Delph","LE/MC",79],[25,"Fernandinho","VOL",87],[17,"De Bruyne","MC/MEI",94],[21,"D. Silva","MEI/MC",89],[20,"B. Silva","PD/MEI",85],[10,"Agüero","CA",90],[7,"Sterling","PE/PD",87],[33,"G. Jesus","CA/PE",83],[19,"Sané","PE",86]]},
+      {clube:"Liverpool",ano:"2019–20",tag:"LIV 20",players:[[13,"Alisson","GOL",91],[66,"Alexander-Arnold","LD",89],[4,"Van Dijk","ZAG",94],[12,"Gomez","ZAG/LD",82],[26,"Robertson","LE",88],[3,"Fabinho","VOL/ZAG",87],[14,"Henderson","MC/VOL",85],[5,"Wijnaldum","MEI/MC",84],[11,"Salah","PD/CA",92],[9,"Firmino","CA/MEI",87],[10,"Mané","PE/CA",91],[7,"Milner","MC/LD",79],[15,"Oxlade-Chamberlain","MEI/PD",80]]},
+      {clube:"Manchester United",ano:"2007–08",tag:"MUN 08",players:[[1,"Van der Sar","GOL",88],[2,"G. Neville","LD",81],[15,"Vidić","ZAG",89],[5,"Ferdinand","ZAG",88],[3,"Evra","LE",86],[16,"Carrick","VOL/MC",86],[18,"Scholes","MC/MEI",85],[8,"Anderson","MC/MEI",80],[7,"Ronaldo","PD/PE",96],[9,"Tevez","CA/PE",88],[11,"Giggs","PE/MEI",83],[10,"Rooney","CA/MEI",89],[17,"Nani","PD/PE",81]]},
+      {clube:"Chelsea",ano:"2009–10",tag:"CHE 10",players:[[1,"Čech","GOL",87],[2,"I. Cole","LD/LE",84],[26,"Terry","ZAG",90],[24,"Alex","ZAG",83],[3,"A. Cole","LE",88],[4,"Mikel","VOL",81],[8,"Lampard","MC/MEI",92],[12,"Mineiro","MC",77],[7,"Malouda","PE/PD",83],[11,"Drogba","CA",90],[17,"J. Cole","MEI/PE",82],[9,"Anelka","CA/PD",85],[21,"Kalou","PD/CA",80]]},
+      {clube:"Arsenal",ano:"1997–98",tag:"ARS 98",players:[[1,"Seaman","GOL",86],[2,"Dixon","LD",82],[6,"Adams","ZAG",86],[31,"Bould","ZAG",81],[3,"Winterburn","LE",81],[15,"Vieira","VOL/MC",86],[8,"Petit","VOL/MC",86],[7,"Parlour","MC/PD",78],[11,"Overmars","PE/MEI",86],[10,"Bergkamp","MEI/CA",92],[14,"Anelka","CA/PE",84],[20,"Wreh","CA",74],[17,"Wright","CA/PD",86]]},
+      {clube:"Manchester City",ano:"2022–23",tag:"MCI 23",players:[[31,"Ederson","GOL",90],[2,"Walker","LD",85],[5,"Dias","ZAG",89],[24,"Akanji","ZAG",83],[3,"Aké","LE/ZAG",82],[6,"Rodri","VOL",91],[17,"De Bruyne","MC/MEI",93],[8,"Gündoğan","MC/MEI",85],[20,"B. Silva","PD/MEI",87],[9,"Haaland","CA",92],[11,"Grealish","PE/MEI",83],[47,"Foden","MEI/PE",86],[7,"J. Álvarez","CA/PE",82]]},
+      {clube:"Liverpool",ano:"2008–09",tag:"LIV 09",players:[[1,"Reina","GOL",86],[2,"G. Johnson","LD",81],[17,"Skrtel","ZAG",83],[23,"Carragher","ZAG",84],[12,"Insua","LE",75],[20,"Mascherano","VOL",85],[21,"Lucas","VOL/MC",78],[8,"Gerrard","MEI/MC",91],[7,"Riera","PE/MEI",78],[9,"Torres","CA",91],[18,"Babel","PD/PE",77],[11,"Kuyt","PD/CA",82],[10,"Benayoun","MEI/PD",79]]},
+      {clube:"Tottenham",ano:"2016–17",tag:"TOT 17",players:[[1,"Lloris","GOL",87],[2,"Walker","LD",85],[4,"Alderweireld","ZAG",86],[5,"Vertonghen","ZAG",85],[3,"D. Rose","LE",84],[20,"Dembélé","VOL/MC",85],[19,"Wanyama","VOL",82],[23,"Sissoko","MC/PD",78],[11,"Erik Lamela","PD/MEI",80],[10,"Kane","CA",90],[7,"Son","PE/CA",83],[15,"Dier","VOL/ZAG",80],[8,"Winks","MC",77]]},
+      {clube:"Newcastle",ano:"1995–96",tag:"NEW 96",players:[[1,"Srníček","GOL",79],[2,"Barton","LD",78],[5,"Howey","ZAG",80],[6,"Albert","ZAG",81],[3,"Beresford","LE",79],[4,"Lee","MC/MEI",83],[15,"Batty","VOL",82],[7,"Gillespie","PD/MEI",83],[11,"Ginola","PE/MEI",88],[9,"Ferdinand","CA",85],[10,"Shearer","CA",91],[8,"Clark","MC",76],[17,"Watson","PD/PE",76]]},
+      {clube:"Blackburn",ano:"1994–95",tag:"BLB 95",players:[[1,"Flowers","GOL",83],[2,"Murray","LD",78],[5,"Hendry","ZAG",83],[6,"Le Saux","LE/MC",82],[3,"Sherwood","VOL/MC",81],[15,"Wilcox","PE/MC",79],[7,"Ripley","PD/PE",79],[11,"Newell","MEI",80],[9,"Shearer","CA",91],[10,"Sutton","CA",86],[4,"Slater","MC",76],[14,"Atkins","ZAG",75],[8,"Batty","VOL",81]]},
+      {clube:"Manchester United",ano:"2012–13",tag:"MUN 13",players:[[1,"De Gea","GOL",85],[2,"Rafael","LD",79],[5,"Ferdinand","ZAG",83],[15,"Jones","ZAG",80],[3,"Evra","LE",83],[16,"Carrick","VOL/MC",84],[31,"Cleverley","MC/MEI",76],[8,"Anderson","MC/MEI",78],[7,"Valencia","PD/PE",83],[10,"Rooney","CA/MEI",88],[11,"Young","PE/PD",78],[20,"R. van Persie","CA/PE",91],[17,"Nani","PD/PE",82]]},
+      {clube:"Chelsea",ano:"2016–17",tag:"CHE 17",players:[[1,"Courtois","GOL",88],[2,"Azpilicueta","LD/ZAG",83],[28,"D. Luiz","ZAG",86],[24,"Cahill","ZAG",83],[28,"Marcos Alonso","LE",81],[7,"Matić","VOL",85],[4,"Fàbregas","MC/MEI",85],[13,"Kanté","VOL/MC",88],[22,"Willian","PD/MEI",83],[10,"Hazard","PE/MEI",89],[19,"Costa","CA",88],[11,"Pedro","PD/PE",82],[17,"Moses","LD/PD",77]]},
+      {clube:"Arsenal",ano:"2001–02",tag:"ARS 02",players:[[1,"Seaman","GOL",84],[12,"Lauren","LD",80],[6,"Adams","ZAG",83],[5,"Keown","ZAG",82],[3,"A. Cole","LE",85],[4,"Vieira","VOL/MC",90],[8,"Parlour","MC",79],[15,"Ljungberg","MEI/PD",84],[7,"Pirès","PE/MEI",88],[14,"Henry","CA",93],[11,"Wiltord","PE/CA",83],[10,"Bergkamp","MEI/CA",86],[17,"Edu","MC",78]]},
+      {clube:"Liverpool",ano:"2021–22",tag:"LIV 22",players:[[1,"Alisson","GOL",90],[66,"Alexander-Arnold","LD",88],[4,"Van Dijk","ZAG",91],[32,"Matip","ZAG",83],[26,"Robertson","LE",87],[3,"Fabinho","VOL",86],[6,"Thiago","MC/MEI",86],[14,"Henderson","MC/VOL",84],[11,"Salah","PD/CA",93],[9,"Firmino","CA/MEI",84],[10,"Mané","PE/CA",89],[17,"Jota","CA/PE",83],[20,"Díaz","PE/CA",83]]},
+      {clube:"Everton",ano:"1984–85",tag:"EVE 85",players:[[1,"Southall","GOL",86],[2,"Stevens","LD",80],[5,"Ratcliffe","ZAG",82],[6,"Mountfield","ZAG",79],[3,"Van den Hauwe","LE",78],[4,"Reid","VOL/MC",83],[8,"Bracewell","MC",80],[11,"Steven","MEI/PE",83],[7,"Sheedy","PE/MEI",83],[9,"Sharp","CA",83],[10,"Gray","CA/PD",82],[14,"Heath","PD/MEI",79],[12,"Harper","LD",74]]},
+      {clube:"Manchester United",ano:"1993–94",tag:"MUN 94",players:[[1,"Schmeichel","GOL",90],[2,"Parker","LD",81],[6,"Bruce","ZAG",85],[5,"Pallister","ZAG",86],[3,"Irwin","LE",84],[4,"Keane","VOL/MC",88],[16,"Ince","MC/MEI",86],[7,"Robson","MC",82],[11,"Giggs","PE/MEI",88],[9,"Hughes","CA",86],[10,"Cantona","CA/MEI",92],[17,"Sharpe","PE/PD",81],[8,"Kanchelskis","PD/PE",83]]},
+      {clube:"Leicester",ano:"2015–16",tag:"LEI 16",players:[[1,"Schmeichel","GOL",83],[17,"Simpson","LD",77],[6,"Huth","ZAG",81],[4,"Morgan","ZAG",80],[3,"Fuchs","LE",79],[20,"Drinkwater","MC/VOL",79],[4,"Kanté","VOL/MC",86],[7,"Mahrez","PD/MEI",88],[11,"Marc Albrighton","PE/MEI",76],[9,"Vardy","CA",86],[18,"Okazaki","CA/MEI",77],[8,"King","MEI/CA",75],[33,"Amartey","ZAG/VOL",74]]}
+    ]},
+  laliga: { name:'La Liga', flag:FLAGS.esp,
+    squads:[
+      {clube:"Barcelona",ano:"2010–11",tag:"BAR 11",players:[[1,"Valdés","GOL",86],[2,"D. Alves","LD",90],[3,"Piqué","ZAG",89],[5,"Puyol","ZAG/LD",87],[22,"Abidal","LE/ZAG",84],[16,"Busquets","VOL",88],[6,"Xavi","MC/MEI",93],[8,"Iniesta","MEI/MC",92],[17,"Pedro","PD/PE",84],[10,"Messi","CA/PD",97],[7,"Villa","PE/CA",87],[14,"Mascherano","ZAG/VOL",85],[20,"Afellay","PD/MEI",78]]},
+      {clube:"Real Madrid",ano:"2016–17",tag:"RMA 17",players:[[1,"Navas","GOL",85],[2,"Carvajal","LD",86],[4,"Ramos","ZAG",91],[5,"Varane","ZAG",86],[12,"Marcelo","LE",89],[14,"Casemiro","VOL",88],[8,"Kroos","MC",91],[10,"Modrić","MEI/MC",92],[11,"Bale","PD/CA",88],[9,"Benzema","CA",88],[7,"C. Ronaldo","PE/CA",96],[22,"Isco","MEI",86],[20,"Asensio","PD/PE",82]]},
+      {clube:"Atlético de Madrid",ano:"2013–14",tag:"ATM 14",players:[[13,"Courtois","GOL",89],[20,"Juanfran","LD",83],[2,"Godín","ZAG",89],[23,"Miranda","ZAG",86],[3,"Filipe Luís","LE",85],[5,"Tiago","VOL/MC",82],[14,"Gabi","MC/VOL",84],[6,"Koke","MEI/MC",85],[21,"Arda Turan","PD/MEI",85],[19,"D. Costa","CA",89],[7,"Raúl García","PE/MEI",80],[9,"Villa","CA/PE",83],[10,"Diego","MEI",80]]},
+      {clube:"Barcelona",ano:"2014–15",tag:"BAR 15",players:[[13,"Bravo","GOL",85],[22,"D. Alves","LD",87],[3,"Piqué","ZAG",88],[14,"Mascherano","ZAG/VOL",86],[18,"J. Alba","LE",86],[5,"Busquets","VOL",89],[4,"Rakitić","MC/MEI",86],[8,"Iniesta","MEI/MC",89],[10,"Messi","PD/CA",96],[9,"Suárez","CA",92],[11,"Neymar","PE/CA",92],[6,"Xavi","MC",86],[7,"Pedro","PD/PE",82]]},
+      {clube:"Valencia",ano:"2003–04",tag:"VAL 04",players:[[1,"Cañizares","GOL",87],[20,"Curro Torres","LD",78],[5,"Ayala","ZAG",88],[15,"Marchena","ZAG/VOL",83],[14,"Carboni","LE",79],[8,"Baraja","VOL/MC",86],[6,"Albelda","VOL",85],[21,"Aimar","MEI",87],[7,"Angulo","PD/CA",79],[9,"Mista","CA",82],[11,"Vicente","PE",86],[10,"Sissoko","MC/VOL",78],[18,"Rufete","PD/PE",77]]},
+      {clube:"Real Madrid",ano:"2011–12",tag:"RMA 12",players:[[1,"Casillas","GOL",89],[2,"Arbeloa","LD",81],[4,"Ramos","ZAG",89],[5,"Pepe","ZAG",86],[12,"Marcelo","LE",86],[14,"Alonso","VOL/MC",88],[8,"Khedira","MC/VOL",85],[10,"Özil","MEI/PD",89],[7,"C. Ronaldo","PE/CA",95],[9,"Benzema","CA",87],[11,"Di María","PE/PD",85],[19,"Granero","MC",77],[22,"Higuaín","CA/PD",86]]},
+      {clube:"Barcelona",ano:"2008–09",tag:"BAR 09",players:[[1,"Valdés","GOL",85],[2,"D. Alves","LD",88],[3,"Piqué","ZAG",86],[5,"Puyol","ZAG/LD",88],[19,"Maxwell","LE",79],[16,"Busquets","VOL",82],[6,"Xavi","MC/MEI",91],[8,"Iniesta","MEI/MC",90],[17,"Eto’o","PD/CA",91],[9,"Touré","ZAG/VOL",81],[10,"Messi","PE/CA",95],[14,"Henry","PE/CA",88],[20,"Keita","MC",78]]},
+      {clube:"Real Madrid",ano:"2001–02",tag:"RMA 02",players:[[1,"Casillas","GOL",86],[2,"Salgado","LD",82],[4,"Hierro","ZAG",86],[6,"Helguera","ZAG",83],[11,"Roberto Carlos","LE/PE",92],[19,"Makélélé","VOL",88],[8,"McManaman","PD/MEI",79],[5,"Zidane","MEI/MC",95],[10,"Figo","PD/PE",91],[9,"Raúl","CA",92],[7,"Morientes","CA/PD",86],[14,"Guti","MEI/MC",82],[17,"Solari","PE/MEI",76]]},
+      {clube:"Deportivo",ano:"1999–00",tag:"DEP 00",players:[[1,"Molina","GOL",83],[2,"Manuel Pablo","LD",81],[4,"Naybet","ZAG",86],[5,"Romero","ZAG",79],[3,"Donato","LE",78],[6,"Mauro Silva","VOL",86],[8,"Flávio Conceição","MC/VOL",82],[10,"Djalminha","MEI",86],[7,"Bebeto","PD",76],[9,"Tristán","CA",82],[11,"Makaay","CA/PE",82],[14,"Capdevila","LE/ZAG",79],[17,"Sergio","PD/MEI",77]]},
+      {clube:"Sevilla",ano:"2006–07",tag:"SEV 07",players:[[13,"Palop","GOL",83],[20,"Daniel Alves","LD",86],[5,"Puerta","ZAG",81],[2,"Pablo","ZAG",79],[3,"Escudé","LE/ZAG",78],[14,"Poulsen","VOL",82],[8,"Renato","VOL/MC",81],[6,"Maresca","MC/MEI",80],[21,"Adriano","PD/PE",82],[9,"Kanouté","CA",86],[11,"Kerzhakov","CA/PE",79],[7,"Marti","PD",76],[10,"Jesús Navas","PD/PE",83]]},
+      {clube:"Barcelona",ano:"2005–06",tag:"BAR 06",players:[[1,"Valdés","GOL",83],[2,"Belletti","LD",79],[3,"Márquez","ZAG",85],[5,"Puyol","ZAG/LD",86],[19,"Van Bommel","LE/VOL",79],[16,"Edmílson","VOL",80],[6,"Xavi","MC/MEI",88],[8,"Iniesta","MEI/MC",85],[7,"Eto’o","PD/CA",90],[10,"Ronaldinho","PE/CA",96],[17,"Giuly","PE/PD",83],[20,"Deco","MEI/MC",88],[4,"Motta","MC",79]]},
+      {clube:"Real Madrid",ano:"1986–87",tag:"RMA 87",players:[[1,"Buyo","GOL",83],[2,"Chendo","LD",79],[4,"Camacho","ZAG/VOL",81],[5,"Maceda","ZAG",80],[3,"Sanchís","LE/ZAG",82],[6,"Míchel","MC/MEI",86],[8,"Martín Vázquez","MC/MEI",83],[10,"Valdano","CA",85],[11,"Butragueño","PD/CA",88],[7,"Gordillo","PE/MEI",82],[9,"Hugo Sánchez","CA",91],[14,"Pardeza","PD/MEI",78],[15,"Tendillo","ZAG",76]]},
+      {clube:"Atlético de Madrid",ano:"2020–21",tag:"ATM 21",players:[[13,"Oblak","GOL",91],[20,"Trippier","LD",83],[2,"Giménez","ZAG",86],[15,"Felipe","ZAG",81],[3,"Lodi","LE",79],[5,"Koke","VOL/MC",83],[14,"Llorente","VOL/MC",79],[8,"Saúl","MEI/VOL",81],[7,"Carrasco","PE/PD",83],[9,"Suárez","CA",86],[11,"João Félix","CA/MEI",83],[10,"Correa","PD/CA",79],[6,"Hermoso","ZAG/LE",79]]},
+      {clube:"Valencia",ano:"2001–02",tag:"VAL 02",players:[[1,"Cañizares","GOL",86],[2,"Carboni","LD/LE",78],[5,"Ayala","ZAG",88],[15,"Pellegrino","ZAG",83],[14,"Curro Torres","LE",77],[8,"Baraja","VOL/MC",85],[6,"Albelda","VOL",84],[21,"Aimar","MEI",86],[7,"Angulo","PD/CA",78],[9,"Mendieta","MEI/PD",86],[11,"Kily González","PE/MEI",82],[10,"Sánchez","CA",77],[4,"Djukić","ZAG",76]]},
+      {clube:"Real Sociedad",ano:"2002–03",tag:"RSO 03",players:[[1,"Westerveld","GOL",79],[2,"Aranzubia","LD",74],[4,"Aranburu","ZAG",78],[5,"Loren","ZAG",79],[3,"Aranzabal","LE",79],[6,"Alkiza","VOL/MC",79],[8,"Xabi Alonso","MC/VOL",88],[10,"De Pedro","MEI",83],[7,"Karpin","PE/MEI",82],[9,"Kovačević","CA",82],[11,"Nihat","CA/PD",82],[14,"Tamudo","CA",77],[17,"Albizu","MC/PD",75]]},
+      {clube:"Barcelona",ano:"1991–92",tag:"BAR 92",players:[[1,"Zubizarreta","GOL",86],[20,"Ferrer","LD",82],[5,"Koeman","ZAG",88],[4,"Nando","ZAG",78],[3,"Juan Carlos","LE",77],[6,"Guardiola","VOL/MC",86],[8,"Eusebio","MC/MEI",81],[10,"Bakero","MEI/CA",85],[11,"Laudrup","PD/MEI",90],[9,"Salinas","CA",83],[7,"Stoichkov","PE/CA",90],[14,"Goikoetxea","LE/PE",78],[15,"Amor","MC",79]]},
+      {clube:"Villarreal",ano:"2005–06",tag:"VIL 06",players:[[1,"Viera","GOL",82],[2,"Ángel","LD",78],[5,"Comás","ZAG",79],[15,"Godín","ZAG",78],[3,"Gonzalo","LE",77],[6,"Senna","VOL",84],[8,"Cazorla","MEI/MC",85],[10,"Riquelme","MEI/MC",88],[7,"Capdevila","LE/PE",79],[9,"Forlán","CA",87],[11,"Guayre","PE/CA",75],[20,"José Mari","CA/PD",77],[4,"Rodolfo Arruabarrena","VOL",77]]},
+      {clube:"Real Madrid",ano:"2021–22",tag:"RMA 22",players:[[1,"Courtois","GOL",90],[2,"Carvajal","LD",83],[4,"Alaba","ZAG",87],[3,"Militão","ZAG",84],[12,"Mendy","LE",81],[5,"Casemiro","VOL",88],[8,"Kroos","MC",86],[10,"Modrić","MEI/MC",87],[20,"Vinícius Jr.","PE/CA",86],[9,"Benzema","CA",91],[21,"Rodrygo","PD/CA",80],[6,"Nacho","ZAG/LD",79],[19,"Camavinga","MC/VOL",78]]},
+      {clube:"Athletic",ano:"1983–84",tag:"ATH 84",players:[[1,"Zubizarreta","GOL",85],[2,"Goikoetxea","LD/ZAG",83],[4,"Liceranzu","ZAG",79],[5,"Iceta","ZAG",78],[3,"Urkiaga","LE",79],[6,"Núñez","VOL",81],[8,"Sarabia","MC/MEI",83],[10,"Argote","MEI",80],[7,"Endika","PE/MEI",80],[9,"Dani","CA",79],[11,"Sarriugarte","PE",77],[14,"De la Fuente","CA/PD",81],[15,"Larrazabal","ZAG/VOL",77]]},
+      {clube:"Barcelona",ano:"1996–97",tag:"BAR 97",players:[[1,"Vítor Baía","GOL",86],[2,"Ferrer","LD/LE",81],[5,"Abelardo","ZAG",83],[4,"Couto","ZAG",81],[3,"Sergi","LE",81],[6,"Guardiola","VOL/MC",86],[8,"Celades","MC",78],[10,"Ronaldo","PD/CA",96],[7,"Figo","PD/PE",88],[9,"Pizzi","CA/MEI",84],[11,"Giovanni","PE/MEI",83],[14,"Popescu","ZAG/VOL",80],[17,"Iván de la Peña","MEI/MC",81]]}
+    ]},
+  seriea: { name:'Serie A', flag:FLAGS.ita,
+    squads:[
+      {clube:"Milan",ano:"2006–07",tag:"MIL 07",players:[[1,"Dida","GOL",85],[44,"Oddo","LD",81],[13,"Nesta","ZAG",92],[3,"Maldini","ZAG/LE",88],[18,"Jankulovski","LE",79],[21,"Pirlo","VOL/MC",91],[23,"Ambrosini","MC/VOL",82],[8,"Gattuso","MC/VOL",84],[22,"Kaká","MEI/PD",94],[9,"Inzaghi","CA",85],[10,"Seedorf","MEI/PE",86],[7,"Gilardino","CA",83],[19,"Favalli","LE/ZAG",77]]},
+      {clube:"Internazionale",ano:"2009–10",tag:"INT 10",players:[[12,"J. César","GOL",90],[13,"Maicon","LD",90],[6,"Lúcio","ZAG",88],[25,"W. Samuel","ZAG",86],[26,"Chivu","LE/ZAG",82],[19,"Cambiasso","VOL/MC",87],[4,"Zanetti","MC/LD",86],[10,"Sneijder","MEI",90],[9,"Eto’o","PD/CA",89],[22,"Milito","CA",88],[27,"Pandev","PE/MEI",82],[5,"Stanković","MC/MEI",83],[45,"Balotelli","CA/PD",80]]},
+      {clube:"Juventus",ano:"1995–96",tag:"JUV 96",players:[[1,"Peruzzi","GOL",88],[2,"Ferrara","ZAG/LD",86],[5,"Vierchowod","ZAG",85],[4,"Carrera","ZAG/LD",81],[3,"Pessotto","LE/LD",80],[6,"Paulo Sousa","VOL/MC",85],[8,"Conte","MC/MEI",84],[26,"Deschamps","VOL/MC",86],[18,"Di Livio","PD/MC",79],[9,"Vialli","CA",88],[10,"Del Piero","PE/CA",90],[21,"Ravanelli","CA",85],[14,"Jugović","MC/MEI",82]]},
+      {clube:"Milan",ano:"1993–94",tag:"MIL 94",players:[[1,"S. Rossi","GOL",85],[2,"Tassotti","LD",85],[6,"Baresi","ZAG",93],[5,"Costacurta","ZAG",87],[3,"P. Maldini","LE/ZAG",92],[8,"Desailly","VOL/ZAG",88],[14,"Albertini","MC",85],[10,"Savićević","MEI/CA",87],[7,"Donadoni","PD/PE",84],[9,"Massaro","CA",82],[11,"Raducioiu","CA/PE",78],[16,"Boban","MEI/MC",83],[19,"Simone","CA/PE",77]]},
+      {clube:"Napoli",ano:"1986–87",tag:"NAP 87",players:[[1,"Garella","GOL",82],[2,"Bruscolotti","LD/ZAG",81],[5,"Ferrara","ZAG/LD",84],[6,"Renica","ZAG",81],[3,"Volpecina","LE",77],[4,"Bagni","VOL/MC",82],[8,"De Napoli","MC/VOL",82],[10,"Maradona","MEI/CA",97],[7,"Carnevale","CA/PE",82],[9,"Giordano","CA",84],[11,"Sola","PE/PD",75],[16,"Romano","MC/MEI",77],[15,"Caffarelli","PD/MC",74]]},
+      {clube:"Juventus",ano:"2016–17",tag:"JUV 17",players:[[1,"Buffon","GOL",89],[2,"Cuadrado","LD/PD",82],[3,"G. Chiellini","ZAG",88],[4,"Barzagli","ZAG",83],[12,"Alex Sandro","LE",85],[5,"Pjanić","VOL/MC",87],[8,"Khedira","MC/VOL",83],[21,"Higuaín","CA",88],[10,"Dybala","MEI/CA",86],[7,"Mandzukic","CA/PE",83],[33,"Lemina","MC/VOL",77],[6,"Bonucci","ZAG/VOL",88],[17,"Marchisio","MC/MEI",80]]},
+      {clube:"Roma",ano:"2000–01",tag:"ROM 01",players:[[1,"Antonioli","GOL",79],[2,"Cafu","LD",88],[4,"Zebina","ZAG/LD",79],[13,"Aldair","ZAG",86],[6,"Samuel","LE/ZAG",82],[8,"Tommasi","VOL/MC",82],[10,"Batistuta","CA",89],[7,"Candela","LE/PD",79],[9,"Montella","CA/MEI",83],[20,"Totti","MEI/CA",91],[17,"V. Montella","PD/PE",83],[5,"Emerson","VOL/LE",82],[15,"Delvecchio","CA/PD",79]]},
+      {clube:"Internazionale",ano:"1997–98",tag:"INT 98",players:[[1,"Pagliuca","GOL",84],[2,"Bergomi","LD/ZAG",83],[13,"Galante","ZAG",79],[5,"Colonnese","ZAG",79],[3,"West","LE",78],[8,"Sforza","VOL/MC",81],[6,"Zanetti","MC/LD",86],[10,"Djorkaeff","MEI/PD",88],[9,"Ronaldo","CA/PE",96],[11,"Zamorano","CA",86],[7,"Simeone","VOL/MC",80],[14,"Winter","LE/ZAG",79],[17,"Pirlo","MC/MEI",76]]},
+      {clube:"Lazio",ano:"1999–00",tag:"LAZ 00",players:[[1,"Marchegiani","GOL",82],[2,"Negro","LD",79],[5,"Nesta","ZAG",88],[13,"Mihajlović","ZAG/LE",83],[3,"Pancaro","LE",78],[8,"Conceição","VOL/MC",81],[20,"Almeyda","VOL",82],[10,"Mancini","MEI/MC",82],[7,"Boksic","PD/CA",82],[9,"Salas","CA",86],[11,"Veron","MEI/MC",88],[17,"Nedvěd","PE/MEI",88],[18,"Inzaghi","CA/PD",82]]},
+      {clube:"Milan",ano:"2003–04",tag:"MIL 04",players:[[1,"Dida","GOL",84],[2,"Cafu","LD",85],[13,"Nesta","ZAG",91],[23,"Maldini","ZAG/LE",88],[15,"Costacurta","ZAG/LE",79],[21,"Pirlo","VOL/MC",90],[4,"Gattuso","MC/VOL",83],[22,"Kaká","MEI/PD",88],[8,"Seedorf","MEI/PE",86],[10,"Shevchenko","CA",93],[11,"Rui Costa","MEI/MC",85],[9,"Inzaghi","CA",84],[7,"Serginho","PE/PD",79]]},
+      {clube:"Juventus",ano:"2002–03",tag:"JUV 03",players:[[1,"Buffon","GOL",88],[2,"Birindelli","LD",77],[5,"Thuram","ZAG",86],[4,"Ferrara","ZAG",81],[3,"Zambrotta","LE/PD",86],[21,"Tacchinardi","VOL/MC",79],[8,"Davids","VOL/MC",86],[10,"Del Piero","MEI/CA",91],[7,"Nedvěd","PE/MEI",89],[9,"Trezeguet","CA",90],[11,"Salas","CA/PE",82],[14,"Camoranesi","PD/MEI",81],[6,"Montero","PD/PE",79]]},
+      {clube:"Internazionale",ano:"2020–21",tag:"INT 21",players:[[1,"Handanović","GOL",85],[2,"Hakimi","LD/PD",84],[6,"De Vrij","ZAG",85],[15,"Škriniar","ZAG",84],[33,"Darmian","LE/LD",78],[23,"Barella","MC/MEI",86],[5,"Brozović","VOL",85],[77,"Gagliardini","VOL/MC",77],[7,"Sánchez","CA/MEI",79],[9,"Lukaku","CA",89],[14,"Perišić","PE/PD",82],[18,"Eriksen","MEI/MC",82],[3,"Bastoni","ZAG/LE",81]]},
+      {clube:"Fiorentina",ano:"1998–99",tag:"FIO 99",players:[[1,"Toldo","GOL",85],[2,"Repka","LD/ZAG",81],[5,"Heinrich","ZAG",80],[13,"Pioli","ZAG/VOL",78],[3,"Falcone","LE",77],[8,"Cois","VOL/MC",79],[20,"Di Livio","MC/PD",81],[10,"Rui Costa","MEI/MC",91],[7,"Edmundo","CA/PE",86],[9,"Batistuta","CA",93],[11,"Oliveira","PE/MEI",80],[14,"Torricelli","LD/LE",78],[17,"Amoruso","ZAG",79]]},
+      {clube:"Parma",ano:"1998–99",tag:"PAR 99",players:[[1,"Buffon","GOL",86],[2,"Sensini","LD/ZAG",81],[5,"Cannavaro","ZAG",88],[6,"Thuram","ZAG/VOL",85],[3,"Benarrivo","LE",80],[8,"Dino Baggio","VOL/MC",83],[20,"Stanic","MC/PD",79],[10,"Verón","MEI/MC",88],[7,"Chiesa","PE/CA",86],[9,"Crespo","CA",89],[11,"Almeyda","VOL/MC",80],[17,"Asprilla","CA/PE",83],[4,"Apolloni","ZAG",78]]},
+      {clube:"Milan",ano:"1988–89",tag:"MIL 89",players:[[1,"Galli","GOL",86],[2,"Tassotti","LD",85],[6,"Baresi","ZAG",93],[5,"Costacurta","ZAG",83],[3,"Maldini","LE/ZAG",89],[8,"Colombo","VOL/MC",79],[4,"Ancelotti","MC/VOL",86],[10,"Gullit","MEI/CA",93],[9,"Van Basten","CA",94],[11,"Rijkaard","VOL/MC",89],[7,"Donadoni","PD/PE",85],[15,"Evani","MC",80],[17,"Virdis","CA/PD",79]]},
+      {clube:"Juventus",ano:"2011–12",tag:"JUV 12",players:[[1,"Buffon","GOL",88],[2,"Lichtsteiner","LD",82],[3,"G. Chiellini","ZAG",87],[15,"Barzagli","ZAG",85],[4,"Bonucci","ZAG/VOL",86],[20,"Marchisio","MC/MEI",83],[21,"Pirlo","VOL/MC",89],[8,"Vidal","MC/VOL",86],[7,"Matri","CA/PD",79],[9,"Quagliarella","CA/PE",81],[32,"Krasić","PD/PE",77],[23,"Pogba","MC/VOL",76],[33,"Padoin","LE/MC",76]]},
+      {clube:"Roma",ano:"2013–14",tag:"ROM 14",players:[[1,"Szczęsny","GOL",79],[76,"Maicon","LD",78],[33,"Castán","ZAG",75],[23,"Benatia","ZAG",83],[20,"Florenzi","LE/PD",76],[4,"Nainggolan","VOL/MC",83],[5,"De Rossi","VOL/MC",86],[16,"Pjanić","MEI/MC",85],[7,"Ljajić","PE/MEI",79],[9,"Totti","MEI/CA",83],[11,"Gervinho","PD/PE",81],[17,"Destro","CA/PD",78],[82,"Strootman","MC",78]]},
+      {clube:"Napoli",ano:"2022–23",tag:"NAP 23",players:[[1,"Meret","GOL",83],[22,"Di Lorenzo","LD",84],[26,"Rrahmani","ZAG",81],[4,"Kim","ZAG",86],[6,"Mário Rui","LE",78],[68,"Lobotka","VOL",85],[20,"Zieliński","MC/MEI",83],[99,"Anguissa","MC/VOL",81],[77,"Kvaratskhelia","PE/CA",88],[9,"Osimhen","CA",88],[81,"Politano","PD/MEI",79],[7,"Elmas","MEI/MC",78],[70,"Raspadori","CA/MEI",79]]},
+      {clube:"Sampdoria",ano:"1990–91",tag:"SAM 91",players:[[1,"Pagliuca","GOL",84],[2,"Mannini","LD",78],[5,"Vierchowod","ZAG",85],[6,"Pari","ZAG",76],[3,"Pellegrini","LE",79],[8,"Lombardo","MC/PD",83],[4,"Cerezo","VOL/MC",83],[10,"Mancini","MEI/CA",88],[7,"Vialli","CA",89],[9,"Cerri","CA/MEI",82],[11,"Invernizzi","PE/MEI",77],[14,"Bonetti","ZAG/VOL",76],[17,"Salsano","MC",75]]},
+      {clube:"Internazionale",ano:"1988–89",tag:"INT 89",players:[[1,"Zenga","GOL",86],[2,"Bergomi","LD/ZAG",85],[5,"Ferri","ZAG",82],[6,"Brehme","LE/PE",86],[3,"Mandorlini","LD/ZAG",78],[8,"Berti","VOL/MC",83],[4,"Crippa","MC/MEI",91],[10,"Matthäus","MEI/MC",81],[9,"Klinsmann","CA",88],[11,"Serena","CA/PD",81],[7,"Bianchi","PD/PE",77],[14,"Matteoli","MC",76],[17,"Diaz","CA",77]]}
+    ]},
+  bundesliga: { name:'Bundesliga', flag:FLAGS.ger,
+    squads:[
+      {clube:"Bayern",ano:"2012–13",tag:"BAY 13",players:[[1,"Neuer","GOL",92],[21,"Lahm","LD/MC",90],[17,"Boateng","ZAG/LD",85],[4,"Dante","ZAG",83],[27,"Alaba","LE/ZAG",86],[31,"Schweinsteiger","VOL/MC",90],[39,"J. Martínez","VOL/ZAG",87],[25,"Müller","MEI/PD",88],[10,"Robben","PD",89],[9,"Mandžukić","CA",84],[7,"Ribéry","PE",91],[44,"Tymoshchuk","VOL/ZAG",79],[30,"Shaqiri","PD/PE",80]]},
+      {clube:"Borussia Dortmund",ano:"2010–11",tag:"BVB 11",players:[[1,"Weidenfeller","GOL",83],[26,"Piszczek","LD",83],[15,"Hummels","ZAG",87],[4,"Subotić","ZAG",83],[29,"Schmelzer","LE",80],[6,"Bender","VOL",81],[8,"N. da Silva","MC/VOL",82],[10,"Götze","MEI/PD",86],[16,"Błaszczykowski","PD",81],[9,"Lewandowski","CA",84],[11,"Großkreutz","PE/LE",79],[18,"Sahin","MC/MEI",85],[23,"Kagawa","MEI",84]]},
+      {clube:"Bayern",ano:"2019–20",tag:"BAY 20",players:[[1,"Neuer","GOL",89],[32,"Kimmich","LD/VOL",90],[17,"Boateng","ZAG",82],[27,"Alaba","ZAG/LE",86],[19,"A. Davies","LE",85],[6,"Thiago","VOL/MC",88],[18,"Goretzka","MC/MEI",85],[25,"Müller","MEI",87],[22,"Gnabry","PD/PE",86],[9,"Lewandowski","CA",93],[10,"Coutinho","PE/MEI",83],[29,"Coman","PE/PD",84],[24,"Tolisso","MC",80]]},
+      {clube:"Werder Bremen",ano:"2003–04",tag:"WER 04",players:[[1,"Reinke","GOL",80],[8,"Ernst","LD/MC",79],[4,"Ismaël","ZAG",83],[5,"Baumann","ZAG/VOL",81],[3,"Stalteri","LE/LD",77],[6,"Frings","VOL/MC",85],[10,"Micoud","MEI",87],[20,"Borowski","MC/MEI",82],[7,"Schulz","PD/PE",75],[11,"Klose","CA",85],[24,"Charisteas","PE/CA",79],[9,"Aílton","CA",86],[18,"Krstajić","ZAG",80]]},
+      {clube:"Leverkusen",ano:"2001–02",tag:"LEV 02",players:[[1,"Butt","GOL",82],[2,"Sebescen","LD/PD",76],[5,"Lúcio","ZAG",87],[4,"Ramelow","ZAG/VOL",82],[3,"Plácido","LE",75],[25,"Schneider","PD/MC",83],[13,"Ballack","MC/MEI",90],[10,"Bastürk","MEI",84],[16,"Zivkovic","VOL/MC",76],[9,"Berbatov","CA",82],[11,"Neuville","PE/CA",82],[28,"Brdarić","CA/PE",77],[6,"Vranjes","VOL",75]]},
+      {clube:"Bayern",ano:"2000–01",tag:"BAY 01",players:[[1,"Kahn","GOL",92],[21,"Lizarazu","LE",86],[5,"Linke","ZAG",83],[25,"Kuffour","ZAG",81],[2,"Babbel","LD/ZAG",82],[4,"Sagnol","LD",83],[31,"Effenberg","VOL/MC",89],[6,"Hargreaves","MC/VOL",81],[10,"Scholl","MEI/MC",85],[9,"Élber","CA/PE",86],[7,"Jancker","CA",82],[8,"Salihamidžić","PE/PD",83],[18,"Tarnat","LE/MC",78]]},
+      {clube:"Borussia Dortmund",ano:"1996–97",tag:"BVB 97",players:[[1,"Klos","GOL",82],[2,"Reuter","LD",82],[5,"Kohler","ZAG",86],[6,"Sammer","ZAG/VOL",91],[3,"Zorc","LE/MC",82],[8,"Häßler","MC/MEI",85],[13,"Lambert","VOL/MC",79],[10,"Möller","MEI/PD",85],[7,"Schulz","PE/MEI",80],[9,"Chapuisat","CA",86],[11,"Riedle","CA/PD",83],[4,"Kree","ZAG",75],[17,"Heinrich","MC",76]]},
+      {clube:"Bayern",ano:"1973–74",tag:"BAY 74",players:[[1,"Maier","GOL",89],[2,"Hansen","LD",79],[5,"Beckenbauer","ZAG/VOL",93],[4,"Schwarzenbeck","ZAG",82],[3,"Breitner","LE/MC",88],[6,"Roth","VOL/MC",83],[8,"Zobel","MC",78],[10,"Müller","CA",93],[7,"Hoeneß","MEI/CA",85],[9,"Wunder","CA/PE",76],[11,"Kapellmann","PD/MEI",77],[14,"Dürnberger","MC",75],[17,"Hoffmann","PD",75]]},
+      {clube:"Stuttgart",ano:"2006–07",tag:"VFB 07",players:[[1,"Hildebrand","GOL",82],[21,"Pander","LD/ZAG",77],[4,"Beck","ZAG",78],[5,"Ludwig","ZAG",77],[15,"Tiffert","LE/MC",76],[8,"Hinkel","VOL/PD",79],[6,"Hleb","MC/MEI",82],[10,"Hitzlsperger","MEI/MC",82],[11,"Trochowski","PE/MEI",79],[9,"Cacau","CA",79],[7,"Mutlu","PD/PE",76],[14,"Pogrebnyak","CA",77],[17,"Gentner","MC/VOL",77]]},
+      {clube:"Borussia M’gladbach",ano:"1976–77",tag:"MGL 77",players:[[1,"Kneib","GOL",83],[2,"Vogts","LD/ZAG",88],[5,"Klinkhammer","ZAG",79],[6,"Wittkamp","ZAG",78],[3,"Hannes","LE",77],[8,"Bonhof","VOL/MC",86],[10,"Heynckes","MEI/CA",88],[7,"Simonsen","PD/PE",88],[11,"Danner","MEI/MC",80],[9,"Kulik","CA",76],[14,"Le Fevre","CA/PE",81],[4,"Schäffer","MC",76],[17,"Wohlers","PD",76]]},
+      {clube:"Bayern",ano:"2015–16",tag:"BAY 16",players:[[1,"Neuer","GOL",90],[21,"Lahm","LD/MC",88],[17,"Boateng","ZAG",86],[5,"Benatia","ZAG",82],[27,"Alaba","LE/ZAG",86],[31,"Vidal","VOL/MC",86],[6,"Thiago","MC/MEI",86],[25,"Müller","MEI/CA",88],[7,"Ribéry","PE",87],[9,"Lewandowski","CA",90],[10,"Coman","PD/PE",81],[8,"Javi Martínez","VOL/ZAG",84],[11,"Costa","PE/CA",83]]},
+      {clube:"Hamburgo",ano:"1982–83",tag:"HSV 83",players:[[1,"Stein","GOL",85],[2,"Kaltz","LD",86],[5,"Wehmeyer","ZAG",79],[6,"Nogly","ZAG",78],[3,"Buljan","LE",77],[8,"Hrubesch","CA",86],[4,"Jakobs","VOL/LE",78],[10,"Magath","MEI/MC",85],[7,"Memering","PD/MC",77],[9,"Reimann","CA/PE",79],[11,"Milewski","PE/CA",77],[14,"Rolff","VOL/MC",78],[17,"Hieronymus","LE/MC",75]]},
+      {clube:"Borussia Dortmund",ano:"2012–13",tag:"BVB 13",players:[[1,"Weidenfeller","GOL",85],[26,"Piszczek","LD",84],[15,"Hummels","ZAG",88],[25,"Subotić","ZAG",82],[29,"Schmelzer","LE",81],[6,"Bender","VOL",82],[23,"Gündoğan","MC/MEI",85],[11,"Reus","MEI/PE",88],[7,"Błaszczykowski","PD/PE",82],[9,"Lewandowski","CA",88],[19,"Großkreutz","PE/LD",80],[8,"Kehl","VOL/MC",79],[27,"Santana","ZAG",80]]},
+      {clube:"Wolfsburg",ano:"2008–09",tag:"WOB 09",players:[[1,"Benaglio","GOL",84],[21,"Riether","LD",77],[5,"Madlung","ZAG",79],[28,"Žigić","CA",78],[3,"Ricardo Costa","LE/ZAG",79],[6,"Josué","VOL/MC",80],[7,"Hasebe","VOL/MC",81],[11,"Gentner","MC/MEI",80],[10,"Dzeko","CA/PD",84],[9,"Grafite","CA/PE",86],[17,"Pekarík","LD/PD",77],[8,"Misimović","MEI/MC",83],[4,"Barzagli","ZAG/LD",81]]},
+      {clube:"Bayern",ano:"1999–00",tag:"BAY 00",players:[[1,"Kahn","GOL",91],[21,"Lizarazu","LE",86],[5,"Linke","ZAG",82],[25,"Kuffour","ZAG",80],[2,"Babbel","LD/ZAG",83],[6,"Matthäus","VOL/MC",85],[31,"Effenberg","MC/MEI",88],[8,"Jeremies","VOL/MC",81],[10,"Scholl","MEI/PD",85],[9,"Élber","CA/PE",86],[7,"Jancker","CA",81],[18,"Salihamidžić","PD/PE",82],[4,"Sagnol","LD",79]]},
+      {clube:"Schalke",ano:"2009–10",tag:"S04 10",players:[[1,"Neuer","GOL",86],[26,"Höwedes","LD/ZAG",79],[2,"Metzelder","ZAG",82],[5,"Bordon","ZAG",77],[3,"Schmitz","LE",76],[6,"Rakimov","VOL",76],[8,"Jurado","MC/MEI",79],[10,"Farfán","PD/MEI",83],[7,"Kuranyi","CA",81],[9,"Edu","CA/PE",78],[11,"Pander","LE/ZAG",76],[20,"Kluge","MC",75],[17,"Asamoah","MC/PE",77]]},
+      {clube:"Kaiserslautern",ano:"1997–98",tag:"FCK 98",players:[[1,"Eike Immel","GOL",81],[2,"Marschall","LD",76],[5,"Ratajczyk","ZAG",77],[6,"Lelle","ZAG",76],[3,"Funkel","LE",76],[8,"Hristov","VOL/MC",77],[10,"Dooley","MEI/MC",80],[9,"Wagner","CA",82],[7,"Häßler","PD/MEI",83],[11,"Reich","PE/MEI",77],[14,"Schuster","ZAG/VOL",76],[17,"Rische","PE/MC",75],[4,"Roos","ZAG",75]]},
+      {clube:"Leverkusen",ano:"2023–24",tag:"LEV 24",players:[[1,"Hrádecký","GOL",86],[20,"Frimpong","LD/PD",83],[3,"Tah","ZAG",83],[35,"Tapsoba","ZAG",82],[25,"A. Hincapié","LE",81],[34,"Xhaka","VOL/MC",83],[8,"A. Palacios","VOL/MC",82],[10,"Wirtz","MEI/CA",88],[7,"Adli","MEI/MC",79],[9,"Boniface","CA",83],[11,"Grimaldo","LE/PE",83],[14,"Schick","CA/PD",81],[19,"Mukiele","LD/ZAG",77]]},
+      {clube:"Colônia",ano:"1977–78",tag:"COL 78",players:[[1,"Schumacher","GOL",86],[2,"Konopka","LD",77],[5,"Cullmann","ZAG/VOL",81],[6,"Bonhof","ZAG",82],[3,"Glowacz","LE",76],[8,"Flohe","VOL/MC",83],[10,"Okudera","MEI/PE",81],[9,"Müller","CA",85],[7,"Löhr","PD/MEI",79],[11,"Littbarski","PE/PD",76],[14,"Dieter","CA/PD",77],[4,"Strack","ZAG",75],[17,"Neumann","MC",75]]},
+      {clube:"Borussia Dortmund",ano:"2001–02",tag:"BVB 02",players:[[1,"Lehmann","GOL",86],[26,"Wörns","ZAG",83],[2,"Reuter","LD",81],[5,"Christoph Metzelder","ZAG",82],[3,"Beck","LE",78],[8,"Lambert","VOL/MC",80],[31,"Frings","VOL/MC",84],[10,"Rosický","MEI/MC",86],[7,"Ricken","PD/MEI",81],[9,"Amoroso","CA",85],[11,"Koller","CA/PD",86],[20,"Ewerthon","PE/CA",80],[6,"Bobic","CA",80]]}
+    ]},
+  ligue1: { name:'Ligue 1', flag:FLAGS.fra,
+    squads:[
+      {clube:"PSG",ano:"2015–16",tag:"PSG 16",players:[[30,"Trapp","GOL",83],[26,"Aurier","LD",82],[2,"T. Silva","ZAG",89],[5,"Marquinhos","ZAG/LD",85],[17,"Maxwell","LE",82],[14,"Matuidi","VOL/MC",86],[24,"Verratti","MC/VOL",87],[10,"Pastore","MEI",84],[7,"Lucas","PD/PE",83],[9,"Cavani","CA/PE",87],[11,"Di María","PE/PD",88],[32,"Ibrahimović","CA",91],[8,"T. Motta","VOL",84]]},
+      {clube:"Lyon",ano:"2005–06",tag:"LYO 06",players:[[1,"Coupet","GOL",88],[20,"Réveillère","LD",80],[3,"Cris","ZAG",86],[4,"Caçapa","ZAG",81],[12,"Abidal","LE/ZAG",85],[6,"Diarra","VOL",84],[8,"Juninho","MC/MEI",90],[28,"Toulalan","VOL/MC",82],[7,"Govou","PD/CA",81],[10,"Fred","CA",82],[11,"Malouda","PE/MEI",84],[14,"Wiltord","CA/PD",82],[18,"Tiago","MC",83]]},
+      {clube:"Olympique de Marseille",ano:"1990–91",tag:"OM 91",players:[[1,"Olmeta","GOL",80],[2,"Amoros","LD/LE",85],[5,"Mozer","ZAG",85],[4,"Boli","ZAG",83],[3,"Di Meco","LE",80],[6,"Germain","VOL/MC",78],[8,"Deschamps","VOL/MC",84],[10,"Waddle","MEI/PD",88],[7,"Abedi Pelé","PD/MEI",88],[9,"Papin","CA",92],[11,"Vercruysse","PE/MEI",80],[14,"Fournier","MC",77],[18,"Casoni","ZAG",79]]},
+      {clube:"Monaco",ano:"2016–17",tag:"MON 17",players:[[16,"Subašić","GOL",83],[19,"Sidibé","LD",82],[5,"Jemerson","ZAG",80],[25,"Glik","ZAG",83],[23,"Mendy","LE",83],[2,"Fabinho","VOL/LD",85],[8,"Moutinho","MC/MEI",84],[6,"Bakayoko","VOL/MC",83],[27,"Lemar","PE/MEI",83],[9,"Falcao","CA",86],[29,"Mbappé","CA/PE",86],[10,"B. Silva","MEI/PD",86],[14,"Germain","CA",78]]},
+      {clube:"Bordeaux",ano:"2008–09",tag:"BOR 09",players:[[1,"Ramé","GOL",79],[26,"Chalmé","LD",77],[4,"Diawara","ZAG",81],[5,"Planus","ZAG",78],[3,"Tremoulinas","LE",78],[6,"A. Diarra","VOL",83],[8,"Gourcuff","MEI/MC",87],[7,"Wendel","MC/MEI",79],[20,"Bellion","PD/CA",77],[9,"Chamakh","CA",80],[11,"Cavenaghi","CA/PE",79],[2,"Jurietti","LE/PE",75],[18,"Obertan","PD/PE",75]]},
+      {clube:"PSG",ano:"2019–20",tag:"PSG 20",players:[[1,"Navas","GOL",88],[2,"Dani Alves","LD",81],[5,"Marquinhos","ZAG",86],[3,"Kimpembe","ZAG",82],[14,"Bernat","LE",80],[28,"Paredes","VOL/MC",82],[17,"Herrera","VOL/MC",81],[21,"Draxler","MEI/MC",81],[10,"Neymar","PE/CA",92],[9,"Icardi","CA",85],[7,"Mbappé","CA/PD",91],[8,"Verratti","MC/VOL",86],[11,"Di María","PD/MEI",84]]},
+      {clube:"Lyon",ano:"2007–08",tag:"LYO 08",players:[[1,"Coupet","GOL",86],[20,"Réveillère","LD",80],[3,"Cris","ZAG",85],[15,"Squillaci","ZAG",82],[12,"Cissokho","LE",79],[6,"Toulalan","VOL/MC",83],[8,"Juninho","MC/MEI",88],[28,"Källström","MC/MEI",80],[7,"Govou","PD/CA",82],[9,"Benzema","CA",86],[11,"Fred","PE/CA",81],[10,"Pjanić","MEI",76],[18,"Bodmer","MC",76]]},
+      {clube:"Saint-Étienne",ano:"1975–76",tag:"ASSE 76",players:[[1,"Curkovic","GOL",84],[2,"Janvion","LD",81],[5,"Repellini","ZAG",79],[6,"Lopez","ZAG",82],[3,"Farison","LE",79],[8,"Larqué","VOL/MC",86],[10,"Bathenay","MEI/MC",83],[7,"Synaeghel","PD/MEI",80],[9,"Rocheteau","PE/CA",88],[11,"Santini","CA",83],[14,"Sahnoun","CA/PE",79],[4,"Piazza","ZAG/VOL",82],[17,"Revelli","CA",81]]},
+      {clube:"PSG",ano:"1993–94",tag:"PSG 94",players:[[1,"Lama","GOL",83],[2,"Roche","LD",79],[5,"Fournier","ZAG",79],[6,"Ricardo","ZAG",82],[3,"Colleter","LE",76],[8,"Guérin","VOL/MC",82],[10,"Ginola","PE/MEI",88],[7,"Rai","MEI/MC",85],[9,"Weah","CA/PE",87],[11,"Valdo","MEI/MC",82],[14,"Loko","CA/PD",77],[4,"Le Guen","ZAG/VOL",75],[17,"Vahirua","PD",75]]},
+      {clube:"Nantes",ano:"1994–95",tag:"FCN 95",players:[[1,"Pignol","GOL",81],[2,"Makelele","LD/VOL",82],[5,"Decroix","ZAG",80],[6,"Vairelles","ZAG",77],[3,"Loko","LE",77],[8,"Ouedec","VOL/MC",83],[10,"Pedros","MEI/PD",82],[7,"N’Doram","CA/MEI",80],[9,"Toko","CA",79],[11,"Vahirua","PE/PD",79],[14,"Karembeu","PD/MC",83],[4,"Coupet","ZAG/LD",76],[17,"Le Roux","VOL",75]]},
+      {clube:"Monaco",ano:"1996–97",tag:"ASM 97",players:[[1,"Roma","GOL",82],[2,"Apati","LD",77],[5,"N’Gotty","ZAG",80],[6,"Pichot","ZAG",76],[3,"Galletti","LE",77],[8,"Hujbregts","VOL/MC",77],[10,"Trezeguet","CA/MEI",85],[7,"Sonny Anderson","CA",87],[9,"Christanval","ZAG/VOL",85],[11,"Henry","PD/PE",86],[14,"Marcio Santos","ZAG",77],[4,"Lebœuf","ZAG/VOL",81],[17,"Drulić","MEI",75]]},
+      {clube:"Lille",ano:"2010–11",tag:"LOSC 11",players:[[1,"Landreau","GOL",84],[2,"Béria","LD",77],[5,"Basa","ZAG",76],[6,"Rozehnal","ZAG",79],[3,"Debuchy","LD/LE",81],[8,"Mavuba","VOL/MC",80],[10,"Hazard","PE/MEI",87],[7,"Gervinho","PD/PE",83],[9,"Sow","CA",82],[11,"Frau","CA/PE",76],[14,"Cabaye","MC/MEI",82],[4,"Plestan","MC",82],[17,"Obraniak","PD/MEI",78]]},
+      {clube:"Lyon",ano:"2003–04",tag:"LYO 04",players:[[1,"Coupet","GOL",86],[20,"Carrière","LD",78],[3,"Cris","ZAG",84],[4,"Caçapa","ZAG",79],[12,"Berthod","LE",77],[6,"Diarra","VOL",81],[8,"Juninho","MC/MEI",88],[28,"Govou","PD/CA",80],[7,"Wiltord","PE/CA",85],[10,"Anderson","CA/PE",84],[11,"Malouda","MEI/PE",82],[14,"Edmílson","VOL/ZAG",80],[18,"Réveillère","LD",76]]},
+      {clube:"Olympique de Marseille",ano:"2009–10",tag:"OM 10",players:[[1,"Mandanda","GOL",86],[2,"Mancini","LD/MC",77],[5,"Diawara","ZAG",80],[4,"Heinze","ZAG",82],[3,"Taiwo","LE",79],[8,"Lucho González","VOL/MC",84],[6,"Cheyrou","MC",76],[10,"Valbuena","MEI/PE",82],[7,"Ben Arfa","PD/PE",80],[9,"Brandão","CA",79],[11,"Niang","PE/CA",79],[14,"Cana","VOL/ZAG",79],[17,"Gignac","CA/PD",81]]},
+      {clube:"PSG",ano:"2022–23",tag:"PSG 23",players:[[1,"Donnarumma","GOL",88],[2,"Hakimi","LD",86],[5,"Marquinhos","ZAG",86],[3,"Ramos","ZAG",83],[25,"Mendes","LE",82],[17,"Vitinha","MC/VOL",82],[28,"Zaïre-Emery","MC/MEI",77],[7,"Mbappé","CA/PE",92],[10,"Neymar","PE/MEI",89],[30,"Messi","MEI/CA",90],[21,"Soler","MC/MEI",77],[8,"Verratti","VOL/MC",83],[20,"Sarabia","PD/MEI",77]]},
+      {clube:"Auxerre",ano:"1995–96",tag:"AJA 96",players:[[1,"Cournillet","GOL",79],[2,"Le Pen","LD",76],[5,"Goma","ZAG",81],[6,"Lamouchi","VOL/MC",81],[3,"Pujol","LE",77],[8,"Pereira","MC",80],[10,"Vahirua","MEI/PD",78],[7,"Martins","PD/MEI",77],[9,"Guérin","CA",79],[11,"Faty","CA/PE",76],[14,"Boutoille","PE/CA",78],[4,"Cyprien","ZAG",81],[17,"Lechantre","VOL",75]]},
+      {clube:"Montpellier",ano:"2011–12",tag:"MHSC 12",players:[[1,"Hourcade","GOL",79],[2,"Camara","LD",77],[5,"Mapou","ZAG",82],[6,"Cabella","MEI/MC",83],[3,"Souaré","LE",77],[8,"Stambouli","VOL/MC",79],[10,"Belhanda","MEI/PE",83],[7,"Mounier","PD/CA",80],[9,"Giroud","CA",86],[11,"Utaka","PE/PD",79],[14,"Yanga-Mbiwa","ZAG/VOL",79],[4,"Congré","ZAG",77],[17,"Sio","PD/PE",77]]},
+      {clube:"Lens",ano:"1997–98",tag:"RCL 98",players:[[1,"Warmuz","GOL",82],[2,"Pierre-Fanfan","LD",77],[5,"Gnakpa","ZAG",77],[15,"Le Pen","ZAG",76],[3,"Décanis","LE",77],[6,"Boutoille","VOL/MC",79],[4,"Karembeu","MC/PD",83],[10,"Đorđević","MEI/CA",82],[7,"Pédron","PD/MEI",79],[9,"Sterchele","CA",82],[11,"Streiff","PE/MC",76],[8,"Brunel","MC",75],[20,"Vairelles","CA/PD",76]]},
+      {clube:"Nice",ano:"1958–59",tag:"OGCN 59",players:[[1,"Sinibaldi","GOL",79],[2,"Bonnel","LD",77],[5,"Foix","ZAG",77],[6,"Robin","ZAG",76],[3,"Cap","LE",76],[8,"Bonifaci","VOL/MC",79],[4,"Beaucourt","MC",75],[10,"Bravo","MEI/CA",80],[7,"Roca","PD/MEI",77],[9,"Muro","CA",81],[11,"Ujlaki","PE/CA",77],[14,"Mariani","CA",76],[17,"Cailleux","ZAG/VOL",75]]},
+      {clube:"Marseille",ano:"1992–93",tag:"OM 93",players:[[1,"Barthez","GOL",85],[2,"Angloma","LD",81],[5,"Boli","ZAG",86],[4,"Mozer","ZAG",83],[3,"Di Meco","LE",81],[6,"Sauzée","VOL/MC",84],[8,"Deschamps","VOL/MC",85],[10,"Pelé Boghossian","MEI/PD",86],[7,"Völler","CA/PE",86],[9,"Boksic","CA",86],[11,"Casoni","PE/MC",80],[14,"Eydelie","CA/PD",83],[17,"Durand","MC",77]]}
+    ]},
+  superlig: { name:'Süper Lig', flag:FLAGS.tur,
+    squads:[
+      {clube:"Galatasaray",ano:"1999–00",tag:"GAL 00",players:[[1,"Taffarel","GOL",86],[2,"Capone","LD/ZAG",77],[5,"Popescu","ZAG/VOL",85],[4,"Bülent","ZAG",81],[3,"Ergün","LE",76],[6,"Okan","VOL/MC",80],[8,"Suat","MC",78],[10,"Hagi","MEI",90],[7,"Şükür","CA",86],[9,"Jardel","CA",85],[11,"Arif","PE/PD",79],[17,"Ümit","MC/VOL",79],[20,"Hasan Şaş","PE/MEI",80]]},
+      {clube:"Fenerbahçe",ano:"2007–08",tag:"FEN 08",players:[[1,"Volkan","GOL",83],[77,"Gökhan","LD",78],[4,"Lugano","ZAG",85],[6,"Edu Dracena","ZAG",81],[3,"Roberto Carlos","LE/PE",85],[5,"Selçuk","VOL/MC",79],[8,"Aurélio","VOL/LE",83],[10,"Alex","MEI",88],[7,"Uğur","PD/PE",77],[9,"Semih","CA",79],[11,"Kežman","PE/CA",79],[20,"Deivid","CA/PD",80],[25,"Emre","MC/MEI",81]]},
+      {clube:"Beşiktaş",ano:"2016–17",tag:"BJK 17",players:[[1,"Fabri","GOL",81],[27,"A. Beck","LD",78],[3,"Marcelo","ZAG",82],[5,"Tošić","ZAG",80],[15,"Adriano","LE/PE",80],[6,"Hutchinson","VOL/ZAG",80],[4,"Inler","MC/VOL",79],[10,"Oğuzhan","MEI/MC",81],[7,"Quaresma","PD/PE",84],[9,"Aboubakar","CA",82],[17,"Babel","PE/CA",81],[21,"Talisca","MEI/CA",83],[23,"Cenk","CA",77]]},
+      {clube:"Trabzonspor",ano:"2021–22",tag:"TRA 22",players:[[1,"Çakır","GOL",81],[13,"Pereira","LD/PD",78],[4,"Denswil","ZAG/LE",77],[6,"Hüseyin","ZAG",76],[3,"Bruno Peres","LE/LD",78],[5,"Hamsik","MC/MEI",82],[8,"Bakasetas","MEI/MC",81],[10,"Nwakaeme","PE/MEI",82],[7,"Visca","PD/MEI",80],[9,"Cornelius","CA",79],[11,"Gervinho","PE/PD",79],[27,"Ömür","MEI/PD",78],[21,"Koita","VOL/MC",75]]},
+      {clube:"Galatasaray",ano:"2023–24",tag:"GAL 24",players:[[1,"Muslera","GOL",82],[93,"Boey","LD",80],[42,"Sánchez","ZAG",80],[6,"Nelsson","ZAG",79],[23,"Angeliño","LE",80],[34,"Torreira","VOL/MC",83],[10,"Mertens","MEI/CA",82],[8,"Kerem","PE/PD",81],[7,"Aktürkoğlu","PD/PE",80],[9,"Icardi","CA",84],[11,"Zaha","PE/CA",81],[20,"Ziyech","MEI/PD",81],[19,"Ndombele","MC/VOL",77]]},
+      {clube:"Fenerbahçe",ano:"2004–05",tag:"FEN 05",players:[[1,"Volkan","GOL",80],[2,"Boral","LD",76],[4,"Aurélio","ZAG/LE",81],[6,"Edu Dracena","ZAG",77],[3,"Fabio Luciano","LE",78],[5,"Tümer","VOL/MC",78],[8,"Tuncay","MEI/CA",84],[10,"Marcio Nobre","MEI/MC",80],[7,"Mehmet Aurélio","VOL/LD",80],[9,"Nicolas Anelka","CA",86],[11,"Kazım","PE/CA",79],[20,"Üstündağ","PD/MEI",79],[25,"Appiah","MC",75]]},
+      {clube:"Beşiktaş",ano:"2002–03",tag:"BJK 03",players:[[1,"Rüştü","GOL",86],[2,"Ahmet","LD",77],[4,"İbrahim","ZAG",79],[6,"Ricardinho","ZAG/VOL",79],[3,"Pancu","LE",79],[5,"Tümer","VOL/MC",78],[8,"Yıldıray","MC",79],[10,"Şükür","CA",83],[7,"Sergen","PD/MEI",82],[9,"Ronaldo Guiaro","CA",78],[11,"Tayfun","PE/MEI",78],[20,"Ahmet Dursun","MC/CA",79],[25,"İbrahim Akın","PD/CA",76]]},
+      {clube:"Galatasaray",ano:"2018–19",tag:"GAL 19",players:[[1,"Muslera","GOL",83],[93,"Olarenwaju","LD",76],[42,"Marcão","ZAG",79],[6,"Luyindama","ZAG",79],[23,"Mariano","LE",78],[34,"Feghouli","VOL/MC",81],[10,"Belhanda","MEI/MC",82],[8,"Cigerci","MC/MEI",77],[7,"Aktürkoğlu","PD/PE",77],[9,"Diagne","CA",80],[11,"Sosa","PE/CA",79],[20,"Saracchi","LE/PD",77],[19,"Ndiaye","MC/VOL",76]]},
+      {clube:"Fenerbahçe",ano:"2013–14",tag:"FEN 14",players:[[1,"Volkan","GOL",83],[2,"Gönül","LD",77],[4,"Topal","ZAG/VOL",80],[6,"Şişko","ZAG",76],[3,"Caner","LE",76],[5,"Mehmet Topal","VOL/MC",81],[8,"Sow","VOL/MC",79],[10,"Meireles","MEI/MC",82],[7,"Cristian","PD/MEI",77],[9,"Webó","CA",79],[11,"Bekir Irtegün","PE/CA",79],[20,"Kjaer","ZAG/VOL",79],[25,"Pelvan","MC",75]]},
+      {clube:"Bursaspor",ano:"2009–10",tag:"BUR 10",players:[[1,"Hakan","GOL",79],[2,"Sezer","LD",75],[4,"Sani Kaita","ZAG/VOL",77],[6,"Ferreira","ZAG",76],[3,"Carl Medjani","LE",76],[5,"Ömer","VOL/MC",76],[8,"Türkyılmaz","MC/MEI",78],[10,"Sercan","MEI",77],[7,"Volkan Şen","PD/MEI",75],[9,"Mehmet Yıldız","CA",80],[11,"Ivanschitz","PE/MEI",78],[20,"Bekir","VOL",74],[25,"Ömer Erdoğan","MC",75]]},
+      {clube:"Galatasaray",ano:"1993–94",tag:"GAL 94",players:[[1,"Şenol","GOL",80],[2,"Bülent","LD",76],[4,"Mert","ZAG",78],[6,"Şahin","ZAG",76],[3,"Tugay","LE",81],[5,"Kubilay","VOL/MC",77],[8,"Hagi","MEI/CA",88],[10,"Uğur","MEI/PD",82],[7,"Hami","PD/MEI",81],[9,"Erol","CA",78],[11,"Suat","PE/CA",76],[20,"Bülent3","MC/CA",76],[25,"Hakan Şükür","VOL",75]]},
+      {clube:"Beşiktaş",ano:"1991–92",tag:"BJK 92",players:[[1,"Ahmet","GOL",78],[2,"Recep","LD",75],[4,"Rıza","ZAG",77],[6,"Ali","ZAG",76],[3,"Ali2","LE",75],[5,"Feyyaz","VOL/MC",76],[8,"Mehmet Özdilek","MC/CA",77],[10,"Metin Tekin","CA",82],[7,"Sergen","PD/MEI",82],[9,"Ali Eren","CA",76],[11,"Rıza2","PE/MEI",75],[20,"Hami","ZAG/VOL",74],[25,"Cemil","VOL",74]]},
+      {clube:"Trabzonspor",ano:"1995–96",tag:"TRA 96",players:[[1,"Engin","GOL",80],[2,"Ogün","LD",76],[4,"Hami","ZAG",77],[6,"Sinan","ZAG",76],[3,"Tolunay","LE",76],[5,"Sinan2","VOL/MC",76],[8,"Ergün","MC/CA",76],[10,"Şota Arveladze","MEI/CA",86],[7,"Hami Mandıralı","PD/MEI",79],[9,"Hami2","CA",79],[11,"Tolunay2","PE/CA",76],[20,"Sami","ZAG/VOL",75],[25,"Erol2","VOL",74]]},
+      {clube:"Fenerbahçe",ano:"2010–11",tag:"FEN 11",players:[[1,"Volkan","GOL",82],[2,"Gökhan Gönül","LD",79],[4,"Edu Dracena","ZAG",82],[6,"Lugano","ZAG",83],[3,"Mehmet Topuz","LE",76],[5,"Selçuk","VOL/MC",79],[8,"Mehmet Topal","MC/VOL",79],[10,"Alex","MEI/PD",86],[7,"Meireles","MC/MEI",81],[9,"Webó","CA",79],[11,"Kazım","PE/CA",78],[20,"Sow","MC",77],[25,"Caner","LE",75]]},
+      {clube:"Galatasaray",ano:"2012–13",tag:"GAL 13",players:[[1,"Muslera","GOL",85],[93,"Şener","LD",76],[42,"Chedjou","ZAG",81],[6,"Hakan Balta","ZAG/LE",79],[23,"Cana","LE/VOL",79],[34,"Felipe Melo","VOL/MC",82],[10,"Sneijder","MEI",86],[8,"Selçuk Inan","MC/MEI",82],[7,"Yılmaz","PD/PE",81],[9,"Drogba","CA",86],[11,"Pandev","PE/CA",81],[20,"Riera","PE/MEI",77],[19,"Telles","LE",77]]},
+      {clube:"Başakşehir",ano:"2019–20",tag:"IBFK 20",players:[[1,"Volkan Babacan","GOL",80],[2,"Epureanu","ZAG",79],[4,"Skrtel","ZAG",78],[6,"Mahmut Tekdemir","VOL",78],[3,"Júnior Caiçara","LD/LE",78],[5,"Robinho","MEI/MC",79],[8,"İrfan Can","MC/PD",81],[10,"Visca","MEI/PD",82],[7,"Túlio","CA/PE",77],[9,"Crivelli","CA",78],[11,"Mahmoud","PE/CA",76],[20,"Sezer2","CA/PD",76],[19,"Gulbrandsen","MC",76]]},
+      {clube:"Beşiktaş",ano:"2020–21",tag:"BJK 21",players:[[1,"Ersin","GOL",82],[2,"Rıdvan","LD",77],[4,"Montero","ZAG",78],[6,"Welinton","ZAG",79],[3,"Doğan","LE/PE",78],[5,"Atiba","VOL/MC",80],[8,"Pjanić","MC/MEI",83],[10,"Hutchinson","MC/VOL",79],[7,"Larin","PD/CA",80],[9,"Aboubakar","CA",82],[11,"Ghezzal","PE/MEI",80],[20,"Tosic","PD",76],[19,"N’Koudou","PE/PD",77]]},
+      {clube:"Trabzonspor",ano:"1983–84",tag:"TRA 84",players:[[1,"Şenol","GOL",78],[2,"Şükrü","LD",75],[4,"Selami","ZAG",76],[6,"İlyas","ZAG",75],[3,"Ali","LE",75],[5,"Cemil2","VOL/MC",75],[8,"Necmi","MC/CA",77],[10,"Cemil","MEI/CA",77],[7,"Ali3","PD/MEI",76],[9,"Necmi3","CA",77],[11,"Şükrü4","PE/CA",75],[20,"Selami3","ZAG/VOL",74],[19,"Şenol3","VOL",74]]},
+      {clube:"Fenerbahçe",ano:"1988–89",tag:"FEN 89",players:[[1,"Engin","GOL",78],[2,"Rıdvan","LD",75],[4,"Cemil","ZAG",76],[6,"Oğuz2","ZAG",75],[3,"Ogün","LE",75],[5,"Cemil2","VOL/MC",75],[8,"Aykut","MC/CA",78],[10,"Sinan2","MEI/CA",78],[7,"Aykut2","PD/MEI",75],[9,"Oğuz","CA",77],[11,"Engin3","PE/CA",75],[20,"Aykut3","ZAG/VOL",74],[19,"Hami2","VOL",74]]},
+      {clube:"Trabzonspor",ano:"2010–11",tag:"TRA 11",players:[[1,"Onur","GOL",81],[2,"Gustavo Colman","LD",77],[4,"Egemen","ZAG",79],[6,"Remzi","ZAG",77],[3,"Caner Erkin","LE",80],[8,"Sapunaru","VOL/ZAG",78],[20,"Gökdeniz","MC/MEI",81],[10,"Alanzinho","MEI/PE",82],[7,"Umut Bulut","PD/CA",83],[9,"Burak Yılmaz","CA",85],[11,"Sun Kim","PE/CA",77],[5,"Gustavo","VOL",77],[17,"Tomasevic","PD/MEI",76]]}
+    ]}
+};
+
+/* ===================== FORMAÇÕES (posições exatas + coordenadas) ===================== */
+const FORMATIONS = {
+  '4-3-3':  {atk:2, defn:-1, slots:[['GOL',50,88],['LE',12,67],['ZAG',38,67],['ZAG',62,67],['LD',88,67],['VOL',28,47],['MC',50,43],['MEI',72,47],['PE',18,18],['CA',50,14],['PD',82,18]]},
+  '4-4-2':  {atk:0, defn:0,  slots:[['GOL',50,88],['LE',12,67],['ZAG',38,67],['ZAG',62,67],['LD',88,67],['VOL',20,45],['MC',42,43],['MC',58,43],['MEI',80,45],['CA',38,16],['CA',62,16]]},
+  '3-5-2':  {atk:1, defn:-1, slots:[['GOL',50,88],['ZAG',25,68],['ZAG',50,70],['ZAG',75,68],['LE',8,48],['VOL',32,46],['MC',50,42],['MEI',68,46],['LD',92,48],['CA',38,16],['CA',62,16]]},
+  '4-2-3-1':{atk:1, defn:0,  slots:[['GOL',50,88],['LE',12,67],['ZAG',38,67],['ZAG',62,67],['LD',88,67],['VOL',35,52],['VOL',65,52],['PE',15,30],['MEI',50,28],['PD',85,30],['CA',50,11]]},
+  '5-3-2':  {atk:-2,defn:3,  slots:[['GOL',50,88],['LE',8,63],['ZAG',28,68],['ZAG',50,70],['ZAG',72,68],['LD',92,63],['VOL',28,44],['MC',50,41],['MEI',72,44],['CA',38,16],['CA',62,16]]},
+  '4-1-4-1':{atk:-1,defn:2,  slots:[['GOL',50,88],['LE',12,67],['ZAG',38,67],['ZAG',62,67],['LD',88,67],['VOL',50,55],['PE',12,35],['MC',38,38],['MEI',62,38],['PD',88,35],['CA',50,13]]}
+};
+const SECTOR={GOL:'def',LD:'def',ZAG:'def',LE:'def',VOL:'mid',MC:'mid',MEI:'mid',PD:'att',PE:'att',CA:'att'};
+
+const STYLES = {
+  posse:       {atk:1, defn:1, varr:-0.10},
+  contra:      {atk:1, defn:-1,varr: 0.25},
+  pressao:     {atk:2, defn:-2,varr: 0.10},
+  equilibrado: {atk:0, defn:0, varr: 0},
+  defesa:      {atk:-2,defn:3, varr:-0.10},
+  ataque:      {atk:3, defn:-2,varr: 0.20}
+};
+const DIFFS = {
+  facil:   {player:3, opp:0, varr: 0.05, rerolls:7, showOvr:true},
+  medio:   {player:0, opp:0, varr: 0,    rerolls:5, showOvr:true},
+  dificil: {player:0, opp:2, varr:-0.05, rerolls:3, showOvr:false},
+  lendario:{player:0, opp:4, varr:-0.15, rerolls:2, showOvr:false}
+};
+
+/* ===================== STATE ===================== */
+const S = {
+  screen:'screenConfig',
+  formation:null, style:null, diff:null, league:null,
+  rerolls:0, filled:{}, selected:null, currentSquad:null, currentSquadId:null,
+  phase:'choose', lastAdded:null, slots:[], results:null, roundTeamIds:[],
+  usedNames:new Set(), msg:null, teamName:null, meStats:null
+};
+
+/* ===================== POSIÇÕES / COMPATIBILIDADE ===================== */
+function playerPositions(p){return p.pos.split('/');} // [principal, secundária?]
+function accepts(slotPos,p){return playerPositions(p).includes(slotPos);}
+// Vaga: primeiro tenta posição principal, depois secundária
+function findSlotFor(p){
+  const [main,sec]=playerPositions(p);
+  let s=S.slots.find(sl=>sl.pos===main&&!S.filled[sl.id]);
+  if(!s&&sec)s=S.slots.find(sl=>sl.pos===sec&&!S.filled[sl.id]);
+  return s||null;
+}
+function fitsAnyEmpty(p){return !!findSlotFor(p);}
+
+/* ===================== CONFIG UI ===================== */
+function renderConfig(){
+  document.getElementById('cfgEyebrow').textContent=t('eyebrow');
+  document.getElementById('cfgTitle').innerHTML=t('title');
+  document.getElementById('cfgSub').textContent=t('subtitle');
+  document.getElementById('cfgInst').textContent=t('institutional');
+  document.getElementById('lblFormation').textContent=t('formation');
+  document.getElementById('lblStyle').textContent=t('styleL');
+  document.getElementById('lblDiff').textContent=t('diffL');
+  document.getElementById('lblLiga').textContent=t('leagueL');
+  document.getElementById('btnStart').textContent=t('start');
+  document.getElementById('cdFormation').textContent=t('cFormation');
+  document.getElementById('cdStyle').textContent=t('cStyle');
+  document.getElementById('cdDiff').textContent=t('cDiff');
+  document.getElementById('cdLeague').textContent=t('cLeague');
+
+  document.getElementById('optFormation').innerHTML=Object.keys(FORMATIONS).map(k=>'<button class="opt '+(S.formation===k?'sel':'')+'" onclick="pick(\'formation\',\''+k+'\')">'+k+'</button>').join('');
+  document.getElementById('descFormation').textContent=S.formation?tn('formD',S.formation):'';
+
+  document.getElementById('optStyle').innerHTML=Object.keys(STYLES).map(k=>'<button class="opt '+(S.style===k?'sel':'')+'" onclick="pick(\'style\',\''+k+'\')">'+tn('styles',k)+'</button>').join('');
+  document.getElementById('descStyle').textContent=S.style?tn('styleD',S.style):'';
+
+  document.getElementById('optDiff').innerHTML=Object.keys(DIFFS).map(k=>'<button class="opt '+(S.diff===k?'sel':'')+'" onclick="pick(\'diff\',\''+k+'\')">'+tn('diffs',k)+'</button>').join('');
+  document.getElementById('descDiff').textContent=S.diff?tn('diffD',S.diff):'';
+
+  document.getElementById('optLiga').innerHTML=Object.keys(LEAGUES).map(k=>'<button class="opt liga-opt '+(S.league===k?'sel-blue':'')+'" onclick="pick(\'league\',\''+k+'\')">'+LEAGUES[k].flag+' '+LEAGUES[k].name+'</button>').join('');
+  document.getElementById('descLiga').textContent=S.league?t('leagueDesc',{league:LEAGUES[S.league].name}):'';
+
+  const ok=S.formation&&S.style&&S.diff&&S.league;
+  document.getElementById('btnStart').disabled=!ok;
+  document.getElementById('startHint').textContent=ok?t('hint1'):t('hint0');
+}
+function pick(key,val){S[key]=val;renderConfig();}
+
+/* ===================== BUILD FLOW ===================== */
+function buildSlots(){
+  S.slots=FORMATIONS[S.formation].slots.map((s,i)=>({id:'S'+i,pos:s[0],x:s[1],y:s[2]}));
+}
+function startBuild(){
+  S.rerolls=DIFFS[S.diff].rerolls;
+  S.filled={};S.selected=null;S.phase='choose';S.lastAdded=null;S.msg=null;
+  S.usedNames=new Set();
+  S.currentSquad=null;S.currentSquadId=null;
+  S.roundTeamIds=[]; // ids dos times já usados nesta partida (jogador + 19 adversários)
+  buildSlots();
+  drawPlayableSquad();
+  S.roundTeamIds.push(S.currentSquadId); // o elenco escolhido pelo jogador conta para a rodada
+  S.screen='screenBuild';
+  updateNavStatus();
+  showScreen('screenBuild');
+  drawSquadWithLoading();
+}
+function currentSquad(){return S.currentSquad;}
+function drawSquadWithLoading(){
+  S.phase='loading';renderBuild();
+  setTimeout(()=>{S.phase='choose';S.selected=null;S.msg=null;renderBuild();},850);
+}
+function drawNext(){
+  drawPlayableSquad();
+  if(!S.roundTeamIds.includes(S.currentSquadId))S.roundTeamIds.push(S.currentSquadId);
+  drawSquadWithLoading();
+}
+function skipFree(){drawNext();}
+function resort(){
+  if(S.rerolls<=0)return;
+  S.rerolls--;S.selected=null;S.msg=null;
+  drawNext();
+}
+function selectPlayer(p){
+  if(S.usedNames.has(p.name))return;
+  const slot=findSlotFor(p);
+  if(!slot){S.msg={type:'err',text:t('incompat',{name:p.name,pos:playerPositions(p).join('/')})};S.selected=null;renderBuild();return;}
+  if(S.selected&&S.selected.name===p.name){
+    S.filled[slot.id]={...p,tag:currentSquad().tag,slotId:slot.id,slotPos:slot.pos};
+    S.usedNames.add(p.name);
+    S.lastAdded=p;S.selected=null;S.msg=null;S.phase='nextdraw';
+  }else{
+    S.selected={...p,targetSlot:slot.id};
+    S.msg={type:'hint',text:t('confirm',{name:p.name,pos:slot.pos})};
+  }
+  renderBuild();
+}
+
+function shirtSVG(num,blue){const f=blue?'var(--teal)':'var(--shirt-bg)';const st=blue?'var(--teal-hi)':'var(--shirt-line)';const tc=blue?'#fff':'var(--shirt-num)';
+  return '<svg viewBox="0 0 36 32" width="36" height="32"><path d="M9,2 L2,9 L8,11 L8,30 L28,30 L28,11 L34,9 L27,2 Q23,5 18,5 Q13,5 9,2Z" style="fill:'+f+';stroke:'+st+'" stroke-width="0.5"/><text x="18" y="22" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="11" style="fill:'+tc+'">'+num+'</text></svg>';}
+
+function renderBuild(){
+  const fs=document.getElementById('fieldSlots');
+  const fl=document.getElementById('fieldLoading');
+  fl.style.display=S.phase==='loading'?'flex':'none';
+  fs.style.opacity=S.phase==='loading'?'.3':'1';
+  fs.innerHTML='';
+  S.slots.forEach(slot=>{
+    const f=S.filled[slot.id];
+    const isTarget=S.selected&&S.selected.targetSlot===slot.id;
+    const div=document.createElement('div');
+    div.style.cssText='position:absolute;left:'+slot.x+'%;top:'+slot.y+'%;transform:translate(-50%,-50%);text-align:center;';
+    div.innerHTML=shirtSVG(f?f.num:(isTarget?S.selected.num:''),f?true:isTarget);
+    const n=document.createElement('div');
+    n.style.cssText='font-size:7.5px;font-weight:700;white-space:nowrap;margin-top:1px;color:'+(f?'#fff':(isTarget?'rgba(255,255,255,.85)':'rgba(255,255,255,.32)'))+';';
+    n.textContent=f?f.name:(isTarget?S.selected.name:slot.pos);
+    div.appendChild(n);fs.appendChild(div);
+  });
+
+  const sb=document.getElementById('buildSidebar');
+  const count=Object.keys(S.filled).length;
+  const sq=currentSquad();
+  const showOvr=DIFFS[S.diff]?.showOvr ?? true;
+
+  if(S.phase==='loading'){
+    sb.innerHTML='<div class="load-center"><div class="spinner"></div><div class="load-txt">'+t('drawing')+'</div></div>';
+  } else if(S.phase==='nextdraw'){
+    if(count>=11){
+      sb.innerHTML='<div class="next-draw"><div class="check-circle">✓</div><div class="next-added">'+t('complete')+'</div><div class="next-msg">'+t('completeMsg',{ovr:avgOvr()})+'</div><div style="width:100%;text-align:left;"><div class="resort-label" style="margin-bottom:5px;">'+t('nameTitle')+'</div><input class="team-input" id="teamNameInput" maxlength="24" placeholder="'+t('namePh')+'" value="'+(S.teamName?S.teamName.replace(/"/g,'&quot;'):'')+'"></div><button class="btn-sm" onclick="startChampionship()">'+t('startChamp')+'</button></div>';
+    }else{
+      sb.innerHTML='<div class="next-draw"><div class="check-circle">✓</div><div class="next-added">'+t('added',{name:S.lastAdded.name})+'</div><div class="next-msg">'+t('filledMsg',{n:count})+'</div><button class="btn-sm" onclick="drawNext()">'+t('drawBtn')+'</button></div>';
+    }
+  } else {
+    const players=sq.players.map(a=>({num:a[0],name:a[1],pos:a[2],ovr:a[3]}));
+    const compatCount=players.filter(p=>!S.usedNames.has(p.name)&&fitsAnyEmpty(p)).length;
+    const resBlock=S.rerolls>0?
+      '<div class="resort-block"><div class="resort-label">'+t('resort')+' · '+t(S.rerolls===1?'left1':'leftN',{n:S.rerolls})+'</div><div class="resort-btns"><button class="rbtn" onclick="resort()">'+t('otherClub')+'</button><button class="rbtn" onclick="resort()">'+t('otherSeason')+'</button></div></div>':'';
+    const msgHtml=S.msg?'<div class="confirm-hint '+(S.msg.type==='err'?'err':'')+'">'+S.msg.text+'</div>':'';
+    const noCompat=compatCount===0?'<div class="confirm-hint err">'+t('nocompat')+'</div><div style="padding:10px 16px;background:#fff;border-bottom:0.5px solid #eee;"><button class="btn-sm" onclick="skipFree()" style="font-size:14px;padding:9px;">'+t('skip')+'</button></div>':'';
+    sb.innerHTML=
+      '<div class="saiu-block"><div class="saiu-label">'+t('saiu')+'</div><div class="saiu-clube">'+sq.clube+'</div><div class="saiu-ano">'+sq.ano+'</div></div>'
+      +resBlock
+      +'<div class="choose-label">'+t('choose')+'</div>'+msgHtml+noCompat
+      +'<div class="player-list" id="plist"></div>';
+    const list=document.getElementById('plist');
+    players.forEach(p=>{
+      const used=S.usedNames.has(p.name);
+      const ok=!used&&fitsAnyEmpty(p);
+      const row=document.createElement('div');
+      row.className='prow'+(S.selected&&S.selected.name===p.name?' selected':'')+(ok?'':' taken');
+      row.innerHTML='<span class="pnum">#'+p.num+'</span><span class="pname">'+p.name+'</span><span class="ppos">'+p.pos+'</span>'+(showOvr?'<span class="povr">'+p.ovr+'</span>':'');
+      if(ok)row.onclick=()=>selectPlayer(p);
+      else if(!used)row.onclick=()=>selectPlayer(p); // mostra mensagem de incompatibilidade
+      list.appendChild(row);
+    });
+  }
+
+  document.getElementById('bsLbl').textContent=t('box');
+  document.getElementById('bsCount').textContent=count;
+  document.getElementById('bsOvr').textContent=count?avgOvr():'';
+  document.getElementById('bsRows').innerHTML=S.slots.map(slot=>{
+    const f=S.filled[slot.id];
+    return '<div class="bs-row"><span class="bs-pos">'+slot.pos+'</span><span class="bs-name '+(f?'filled':'')+'">'+(f?f.name+' <span style="font-size:8px;color:#999;">'+f.tag+'</span>':'—')+'</span>'+(f?'<span class="bs-num">'+f.ovr+'</span>':'')+'</div>';
+  }).join('');
+}
+function avgOvr(){const o=Object.values(S.filled).map(f=>f.ovr);return o.length?Math.round(o.reduce((a,b)=>a+b,0)/o.length):0;}
+
+/* ===================== VALIDAÇÃO PRÉ-CAMPEONATO ===================== */
+function validateTeam(){
+  const errs=[];
+  const list=Object.values(S.filled);
+  if(list.length!==11)errs.push(t('valCount'));
+  const seen=new Set();
+  list.forEach(f=>{
+    if(seen.has(f.name))errs.push(t('valDup',{name:f.name}));
+    seen.add(f.name);
+    if(!accepts(f.slotPos,f))errs.push(t('valPos',{name:f.name}));
+  });
+  return errs;
+}
+function startChampionship(){
+  const inp=document.getElementById('teamNameInput');
+  const v=inp?inp.value.trim():'';
+  S.teamName=v||t('myTeam');
+  trySimulate();
+}
+function myName(){return S.teamName||t('myTeam');}
+function trySimulate(){
+  const errs=validateTeam();
+  if(errs.length){S.msg={type:'err',text:errs.join(' ')};S.phase='choose';renderBuild();return;}
+  simulate();
+}
+
+/* ===================== SIMULAÇÃO (modelo setorial) ===================== */
+function shuffle(a){const arr=[...a];for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]];}return arr;}
+function poisson(lambda){let L=Math.exp(-lambda),k=0,p=1;do{k++;p*=Math.random();}while(p>L);return k-1;}
+
+function playerSectors(){
+  const sums={def:[],mid:[],att:[]};
+  S.slots.forEach(sl=>{const f=S.filled[sl.id];if(f)sums[SECTOR[sl.pos]].push(f.ovr);});
+  const avg=a=>a.length?a.reduce((x,y)=>x+y,0)/a.length:avgOvr();
+  return {def:avg(sums.def),mid:avg(sums.mid),att:avg(sums.att)};
+}
+
+function buildChampionship(){
+  const diff=DIFFS[S.diff];
+  const lid=LEAGUE_ID[S.league];
+  const opps=[];
+  for(let i=0;i<19;i++){
+    // nunca repete um time já usado nesta rodada (jogador + adversários anteriores)
+    const tm=getRandomMemorableTeam({leagueId:lid, excludedTeamIds:S.roundTeamIds, cooldown:TEAM_COOLDOWN});
+    S.roundTeamIds.push(tm.id);
+    const base=tm.strength+diff.opp;
+    const d1=(Math.random()-0.5)*3, d2=(Math.random()-0.5)*3;
+    opps.push({id:'opp'+i,name:tm.clube+' '+tm.ano,def:base+d1,mid:base,att:base+d2,varr:0,isPlayer:false});
+  }
+  const fm=FORMATIONS[S.formation], st=STYLES[S.style];
+  const sec=playerSectors();
+  const bonus=diff.player;
+  const player={
+    id:'me', name:myName(),
+    att:sec.att+bonus+fm.atk+st.atk,
+    mid:sec.mid+bonus+(fm.atk+fm.defn+st.atk+st.defn)/4,
+    def:sec.def+bonus+fm.defn+st.defn,
+    varr:st.varr+diff.varr, isPlayer:true
+  };
+  S.meStats={ovr:avgOvr(),att:Math.round(player.att),mid:Math.round(player.mid),def:Math.round(player.def)};
+  return [player,...opps];
+}
+
+function genFixtures(teams){
+  const n=teams.length, ids=teams.map(tm=>tm.id);
+  const fixed=ids[0], rot=ids.slice(1);
+  const firstHalf=[];
+  for(let r=0;r<n-1;r++){
+    const round=[];
+    const left=[fixed,...rot.slice(0,(n/2)-1)];
+    const right=rot.slice((n/2)-1).reverse();
+    for(let i=0;i<n/2;i++){
+      if(i===0&&r%2===1)round.push([right[i],left[i]]);
+      else round.push([left[i],right[i]]);
+    }
+    firstHalf.push(round);
+    rot.unshift(rot.pop());
+  }
+  return [...firstHalf,...firstHalf.map(rd=>rd.map(([h,a])=>[a,h]))];
+}
+
+/* Motor de partida: forças setoriais + exponencial calibrada + ruído controlado.
+   Gols esperados ~1.3 casa / ~1.05 fora entre iguais; goleadas só com grande diferença. */
+function simMatch(home,away){
+  const atkH=0.62*home.att+0.38*home.mid;
+  const defA=0.62*away.def+0.38*away.mid;
+  const atkA=0.62*away.att+0.38*away.mid;
+  const defH=0.62*home.def+0.38*home.mid;
+  let lh=1.18*Math.exp(0.042*(atkH-defA))*1.16;
+  let la=1.18*Math.exp(0.042*(atkA-defH))*0.90;
+  const nH=1+(Math.random()-0.5)*0.16*(1+(home.varr||0));
+  const nA=1+(Math.random()-0.5)*0.16*(1+(away.varr||0));
+  lh=Math.min(3.1,Math.max(0.18,lh*nH));
+  la=Math.min(3.1,Math.max(0.18,la*nA));
+  return [poisson(lh),poisson(la)];
+}
+
+function simulate(){
+  const overlay=document.getElementById('simOverlay');
+  document.getElementById('simLabel').textContent=t('simulating');
+  overlay.classList.add('show');
+  const teams=buildChampionship();
+  const fixtures=genFixtures(teams);
+  const tmap={};teams.forEach(tm=>tmap[tm.id]={...tm,pts:0,j:0,v:0,e:0,d:0,gp:0,gc:0,tb:Math.random()});
+  const myMatches=[];
+  let r=0;
+  const interval=setInterval(()=>{
+    if(r>=38){clearInterval(interval);finishSim(tmap,myMatches);overlay.classList.remove('show');return;}
+    document.getElementById('simRound').textContent=t('round')+' '+(r+1);
+    fixtures[r].forEach(([hId,aId])=>{
+      const h=tmap[hId],a=tmap[aId];
+      const [gh,ga]=simMatch(h,a);
+      h.j++;a.j++;h.gp+=gh;h.gc+=ga;a.gp+=ga;a.gc+=gh;
+      if(gh>ga){h.v++;a.d++;h.pts+=3;}
+      else if(gh<ga){a.v++;h.d++;a.pts+=3;}
+      else{h.e++;a.e++;h.pts++;a.pts++;}
+      if(hId==='me'||aId==='me'){
+        const mine=hId==='me';
+        myMatches.push({rodada:r+1,mandante:h.name,visitante:a.name,gh,ga,
+          resultado:(mine?(gh>ga?'V':gh<ga?'D':'E'):(ga>gh?'V':ga<gh?'D':'E')),homeIsMe:mine});
+      }
+    });
+    r++;
+  },55);
+}
+
+function finishSim(tmap,myMatches){
+  const table=Object.values(tmap).sort((a,b)=>
+    b.pts-a.pts || (b.gp-b.gc)-(a.gp-a.gc) || b.gp-a.gp || b.v-a.v || a.tb-b.tb
+  );
+  S.results={table,myMatches};
+  S.screen='screenResults';
+  renderResults();
+  showScreen('screenResults');
+}
+
+/* ===================== RESULTADOS ===================== */
+function renderResults(){
+  if(!S.results)return;
+  const {table,myMatches}=S.results;
+  const myPos=table.findIndex(tm=>tm.isPlayer)+1;
+  const me=table[myPos-1];
+  const champ=table[0];
+  document.getElementById('resTitle').textContent=t('classFinal');
+  document.getElementById('btnMyTeam').textContent=t('myBtn');
+  document.getElementById('btnGoFinal').textContent=t('resBtn');
+  document.getElementById('resPosLabel').textContent=t('finalLabel');
+  document.getElementById('resPos').textContent=ordinal(myPos);
+  document.getElementById('rtab0').textContent=t('tabT');
+  document.getElementById('rtab1').textContent=t('tabR');
+  document.getElementById('btnResim').textContent=t('resim');
+  document.getElementById('btnNew').textContent=t('newG');
+  document.getElementById('zebraNote').textContent=t('zebra');
+  const vars={pts:me.pts,v:me.v,e:me.e,d:me.d,champ:champ.isPlayer?myName():champ.name,cpts:champ.pts};
+  let key='ph3';
+  if(myPos===1)key='ph1';else if(myPos<=4)key='ph2';else if(myPos<=10)key='ph3';else if(myPos<=17)key='ph4';else key='ph5';
+  document.getElementById('resSummary').textContent=t(key,vars);
+
+  const TH=I18N[LANG].th;
+  // Colunas: # · Time · J · V · E · D · GF · SG · PTS
+  document.getElementById('resTabela').innerHTML=
+    '<table><thead><tr><th class="c">#</th><th>'+TH.team+'</th><th class="c">'+TH.j+'</th><th class="c">'+TH.v+'</th><th class="c">'+TH.e+'</th><th class="c">'+TH.d+'</th><th class="c">'+TH.gp+'</th><th class="c">'+TH.sg+'</th><th class="c">'+TH.p+'</th></tr></thead><tbody>'
+    +table.map((tm,i)=>{
+      const name=tm.isPlayer?'<span class="me-star">★</span>'+myName():tm.name;
+      const sg=tm.gp-tm.gc;
+      return '<tr class="'+(tm.isPlayer?'me':'')+'"><td class="pos-cell c">'+(i+1)+'</td><td>'+name+'</td><td class="c">'+tm.j+'</td><td class="c">'+tm.v+'</td><td class="c">'+tm.e+'</td><td class="c">'+tm.d+'</td><td class="c">'+tm.gp+'</td><td class="c">'+(sg>0?'+':'')+sg+'</td><td class="c"><b>'+tm.pts+'</b></td></tr>';
+    }).join('')+'</tbody></table>';
+
+  document.getElementById('resJogos').innerHTML=
+    '<table><thead><tr><th class="c">'+TH.rod+'</th><th>'+TH.home+'</th><th class="c">'+TH.score+'</th><th>'+TH.away+'</th><th class="c">'+TH.res+'</th></tr></thead><tbody>'
+    +myMatches.map(m=>{
+      const hn=m.homeIsMe?'<b><span class="me-star">★</span>'+myName()+'</b>':m.mandante;
+      const an=!m.homeIsMe?'<b><span class="me-star">★</span>'+myName()+'</b>':m.visitante;
+      const cls=m.resultado==='V'?'res-w':m.resultado==='E'?'res-d':'res-l';
+      const word=m.resultado==='V'?t('win'):m.resultado==='E'?t('draw'):t('loss');
+      return '<tr class="match-row"><td class="c">'+m.rodada+'</td><td>'+hn+'</td><td class="c"><b>'+m.gh+' × '+m.ga+'</b></td><td>'+an+'</td><td class="c"><span class="'+cls+'">'+word+'</span></td></tr>';
+    }).join('')+'</tbody></table>';
+  showResTab(0);
+}
+function showResTab(n){
+  document.getElementById('rtab0').classList.toggle('active',n===0);
+  document.getElementById('rtab1').classList.toggle('active',n===1);
+  document.getElementById('resTabela').style.display=n===0?'block':'none';
+  document.getElementById('resJogos').style.display=n===1?'block':'none';
+}
+function squadRowsHTML(){
+  return S.slots.map(sl=>{
+    const f=S.filled[sl.id];
+    if(!f)return '';
+    return '<div class="squad-row"><span class="sq-pos">'+sl.pos+'</span><span class="sq-num">#'+f.num+'</span><span class="sq-name">'+f.name+'</span><span class="sq-tag">'+f.tag+'</span><span class="sq-ovr">'+f.ovr+'</span></div>';
+  }).join('');
+}
+function meRow(){return S.results?S.results.table.find(tm=>tm.isPlayer):null;}
+function summaryCards(){
+  const me=meRow();if(!me||!S.meStats)return '';
+  const myPos=S.results.table.indexOf(me)+1;
+  const sg=me.gp-me.gc;
+  const cards=[
+    [t('ovrL'),S.meStats.ovr,'blue'],[t('atkL'),S.meStats.att,''],[t('defL'),S.meStats.def,''],
+    [t('formL'),S.formation,''],[t('posL'),ordinal(myPos),'blue'],[t('ptsL'),me.pts,''],
+    [t('gfL'),me.gp,''],[t('gcL'),me.gc,''],[t('sgL'),(sg>0?'+':'')+sg,'']
+  ];
+  let html=cards.map(c=>'<div class="sum-card"><div class="sum-lbl">'+c[0]+'</div><div class="sum-val '+c[2]+'">'+c[1]+'</div></div>').join('');
+  html+='<div class="sum-card" style="grid-column:1/-1;"><div class="sum-lbl">'+t('campL')+'</div><div class="sum-val small">'+t('campTxt',{j:me.j,v:me.v,e:me.e,d:me.d})+'</div></div>';
+  return html;
+}
+function openMyTeam(){
+  document.getElementById('mtTitle').innerHTML='<span class="me-star">★</span> '+myName();
+  document.getElementById('mtSummary').innerHTML=summaryCards();
+  document.getElementById('mtSquadLbl').textContent=t('squadTitle');
+  document.getElementById('mtList').innerHTML=squadRowsHTML();
+  document.getElementById('myTeamModal').classList.add('show');
+}
+function closeMyTeam(){document.getElementById('myTeamModal').classList.remove('show');}
+function goFinal(){S.screen='screenFinal';renderFinal();showScreen('screenFinal');}
+function backToTable(){S.screen='screenResults';renderResults();showScreen('screenResults');}
+function renderFinal(){
+  if(!S.results)return;
+  const me=meRow();
+  const myPos=S.results.table.indexOf(me)+1;
+  const champ=S.results.table[0];
+  document.getElementById('finTitle').textContent=t('finalTitle');
+  document.getElementById('btnBack').textContent=t('backBtn');
+  document.getElementById('finPosLabel').textContent=myName().toUpperCase()+' · '+t('finalLabel');
+  document.getElementById('finPos').textContent=ordinal(myPos);
+  const vars={pts:me.pts,v:me.v,e:me.e,d:me.d,champ:champ.isPlayer?myName():champ.name,cpts:champ.pts};
+  let key='ph3';
+  if(myPos===1)key='ph1';else if(myPos<=4)key='ph2';else if(myPos<=10)key='ph3';else if(myPos<=17)key='ph4';else key='ph5';
+  document.getElementById('finSummary').textContent=t(key,vars);
+  document.getElementById('finStats').innerHTML=summaryCards();
+  document.getElementById('finSquadLbl').textContent=t('squadTitle');
+  document.getElementById('finList').innerHTML=squadRowsHTML();
+  document.getElementById('finResim').textContent=t('resim');
+  document.getElementById('finNew').textContent=t('newG');
+}
+function resimulate(){closeMyTeam();simulate();}
+function goHome(){newGame();}
+function newGame(){
+  S.formation=null;S.style=null;S.diff=null;S.league=null;S.filled={};S.results=null;S.usedNames=new Set();S.teamName=null;S.meStats=null;closeMyTeam();
+  S.screen='screenConfig';
+  updateNavStatus();
+  renderConfig();showScreen('screenConfig');
+}
+
+/* ===================== NAV ===================== */
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+
+renderStatic();
+renderConfig();
+</script>
+</body>
+</html>
